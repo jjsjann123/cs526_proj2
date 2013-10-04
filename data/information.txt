@@ -1,0 +1,8 @@
+Solar system
+http://en.wikipedia.org/wiki/List_of_Solar_System_bodies_formerly_considered_planets#Former_classifications
+
+Other stars
+http://en.wikipedia.org/wiki/List_of_multiplanetary_systems
+
+If inclination can be determined, the true mass can be obtained from the calculated minimum mass using the following relationship:
+Mtrue = M[min] / 
