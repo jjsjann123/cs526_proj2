@@ -1,0 +1,1 @@
+q = { 'name' : 'planetName', 'star' : 'hostName', 'r': 'semi-MajorAxis[AU]', 's': 'pl_rade', 
