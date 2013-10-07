@@ -13,4 +13,4 @@ cam = getDefaultCamera()
 
 cam.setPosition( Vector3( 0, 0, 5))
 
-sphere = SphereShape.create( 0.2, 4 )
+sphere = SphereShape.create( 0.1, 4 )

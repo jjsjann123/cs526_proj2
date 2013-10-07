@@ -15,14 +15,16 @@ class PlanetarySystem(object):
 	radiusScale = 1.0
 	speedScale = 1.0
 	
-	orbitParameter = { 'name' : 'planetName', 'star' : 'hostName', 'orbit': 'semi-MajorAxis[AU]', 'size': 'pl_rade', 'year': 'orbitPeriod[years]', 'day': 'rotationPeriod[days]', 'obliquity': 'rotationTilt[deg]', 'inclination': 'inclination[deg]' }
+	orbitParameter = { 'name' : 'planetName', 'star' : 'hostName', 'orbit': 'semi-MajorAxis[AU]', 'size': 'pl_rade', 'year': 'orbitPeriod[years]', 'day': 'rotationPeriod[days]', 'obliquity': 'rotationTilt[deg]', 'inclination': 'inclination[deg]', 'eccentricity': 'eccentricity' }
 	index = {}
+	
 	
 	def __init__(self):
 		self.starList = []
 		self.planetList = []
 		self.totalDiameter = 0
 		self.sphereScaleNode = SceneNode.create(str(id(self)))
+		self.planetParameterList = {}
 		#self.orbitScaleNode = SceneNode.create(id(self))
 	@classmethod
 	def initialize(cls, str):
@@ -31,6 +33,13 @@ class PlanetarySystem(object):
 			cls.index.update ( { key: cls.attributeList.index(cls.orbitParameter[key]) } )
 		cls.panelNode = SceneNode.create('panelView')
 		cls.viewNode = SceneNode.create('mainView')
+	@classmethod
+	def getElipsePosition(self, theta, majorAxis, eccentricity, inclination):
+		radius = majorAxis * (1 - eccentricity*eccentricity) / (1- eccentricity*cos(radians(theta)))
+		x = cos(radians(theta)) * cos(radians(inclination)) * radius
+		y = sin(radians(theta)) * radius
+		z = cos(radians(theta)) * sin(radians(inclination)) * radius
+		return Vector3(x, z, y)
 	def add(self, attrStr):
 		attribute = attrStr.split(',')
 		if (attribute[0] != attribute[1]):
@@ -38,10 +47,10 @@ class PlanetarySystem(object):
 		else:
 			self.starList.append(attribute)
 	def drawSystem(self):
-	
 		self.orbitLine = LineSet.create()
 		self.orbitLine.setEffect('colored -e green')
-		
+		#self.testLine = LineSet.create()
+		#self.testLine.setEffect('colored -e green')
 		for star in self.starList:
 			self.drawStar( star )
 		for planet in self.planetList:
@@ -56,20 +65,26 @@ class PlanetarySystem(object):
 			#radius = float(planet[self.index['orbit']]) * self.orbitScale
 			majorAxis = float(planet[self.index['orbit']]) * self.orbitScale
 			inclination = float(planet[self.index['inclination']])
-			#eccentricity = float(planet[self.index['eccentricity']])
-			eccentricity = 0.70
+			eccentricity = float(planet[self.index['eccentricity']])
+			#eccentricity = 0.70
 			while theta <= 360:
-				radius = majorAxis * (1 - eccentricity*eccentricity) / (1- eccentricity*cos(radians(theta)))
-				x = cos(radians(theta)) * cos(radians(inclination)) * radius
-				y = sin(radians(theta)) * radius
-				z = cos(radians(theta)) * sin(radians(inclination)) * radius
-				theta += interval
-				nx = cos(radians(theta)) * cos(radians(inclination)) * radius
-				ny = sin(radians(theta)) * radius
-				nz = cos(radians(theta)) * sin(radians(inclination)) * radius
 				line = self.orbitLine.addLine()
-				line.setStart (Vector3(x, z, y))
-				line.setEnd(Vector3(nx, nz, ny))
+				line.setStart (self.getElipsePosition(theta, majorAxis, eccentricity, inclination) )
+				theta += interval
+				line.setEnd (self.getElipsePosition(theta, majorAxis, eccentricity, inclination) )
+				# radius = majorAxis
+				# tx = cos(radians(theta)) * radius
+				# ty = sin(radians(theta)) * radius
+				# theta += interval
+				# tnx = cos(radians(theta)) * radius
+				# tny = sin(radians(theta)) * radius
+				# line = self.orbitLine.addLine()
+				# line.setStart (Vector3(tx, 0, ty))
+				# line.setEnd(Vector3(tnx, 0, tny))
+		
+		#	Draw planets
+		
+	
 	def drawStar(self, star):
 		print "Star"
 def readPlanetarySystemFile(filename, dir = None):
