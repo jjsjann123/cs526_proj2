@@ -12,19 +12,21 @@ class PlanetarySystem(object):
 	fineLevel = 8	#	fine level stays between 0 to 10
 	
 	orbitScale = 1.0
-	radiusScale = 1.0
-	speedScale = 1.0
+	radiusScale = 0.05
+	speedScale = 5.0
 	
 	orbitParameter = { 'name' : 'planetName', 'star' : 'hostName', 'orbit': 'semi-MajorAxis[AU]', 'size': 'pl_rade', 'year': 'orbitPeriod[years]', 'day': 'rotationPeriod[days]', 'obliquity': 'rotationTilt[deg]', 'inclination': 'inclination[deg]', 'eccentricity': 'eccentricity' }
 	index = {}
-	
 	
 	def __init__(self):
 		self.starList = []
 		self.planetList = []
 		self.totalDiameter = 0
 		self.sphereScaleNode = SceneNode.create(str(id(self)))
-		self.planetParameterList = {}
+		
+		#	planetObjList stores the current angle, location and other information of each planet:
+		#		name: obj, theta, 
+		self.planetObjList = {}
 		#self.orbitScaleNode = SceneNode.create(id(self))
 	@classmethod
 	def initialize(cls, str):
@@ -33,13 +35,27 @@ class PlanetarySystem(object):
 			cls.index.update ( { key: cls.attributeList.index(cls.orbitParameter[key]) } )
 		cls.panelNode = SceneNode.create('panelView')
 		cls.viewNode = SceneNode.create('mainView')
-	@classmethod
-	def getElipsePosition(self, theta, majorAxis, eccentricity, inclination):
+	@staticmethod
+	def getElipsePosition(theta, majorAxis, eccentricity, inclination):
 		radius = majorAxis * (1 - eccentricity*eccentricity) / (1- eccentricity*cos(radians(theta)))
 		x = cos(radians(theta)) * cos(radians(inclination)) * radius
 		y = sin(radians(theta)) * radius
 		z = cos(radians(theta)) * sin(radians(inclination)) * radius
 		return Vector3(x, z, y)
+	def setPlanetPosition(self, theta, name):
+		target = self.planetObjList[name]
+		if theta > 360.0:
+			theta -= 360.0
+		target[0] = theta
+		target[1].setPosition( self.getElipsePosition( theta, target[4], target[6], target[5] ) )
+		
+	def planetRotate(self, delta, name):
+		target = self.planetObjList[name]
+		target[0] += delta
+		if target[0] > 360.0:
+			target[0] -= 360.0
+		target[1].setPosition( self.getElipsePosition( target[0], target[4], target[6], target[5] ) )
+
 	def add(self, attrStr):
 		attribute = attrStr.split(',')
 		if (attribute[0] != attribute[1]):
@@ -59,13 +75,14 @@ class PlanetarySystem(object):
 		# Draw orbit
 		# Segments # is defined by fineLevel
 		#		1 - 36 up to 10 - 360
+		index = self.index
+		majorAxis = float(planet[index['orbit']]) * self.orbitScale
+		inclination = float(planet[index['inclination']])
+		eccentricity = float(planet[index['eccentricity']])
 		if self.fineLevel > 0:
 			interval = 10.0 / self.fineLevel
 			theta = 0.0
 			#radius = float(planet[self.index['orbit']]) * self.orbitScale
-			majorAxis = float(planet[self.index['orbit']]) * self.orbitScale
-			inclination = float(planet[self.index['inclination']])
-			eccentricity = float(planet[self.index['eccentricity']])
 			#eccentricity = 0.70
 			while theta <= 360:
 				line = self.orbitLine.addLine()
@@ -83,7 +100,15 @@ class PlanetarySystem(object):
 				# line.setEnd(Vector3(tnx, 0, tny))
 		
 		#	Draw planets
-		
+		name = planet[index['name']]
+		phase = 0
+		size = float(planet[index['size']]) * self.radiusScale
+		obj = SphereShape.create(size, 4)
+		year = float(planet[index['year']])
+		day = float(planet[index['day']])
+		tilt = float(planet[index['obliquity']])
+		self.planetObjList.update({ name: [phase, obj, year, day, majorAxis, inclination, eccentricity]})
+		self.setPlanetPosition( 0, name)
 	
 	def drawStar(self, star):
 		print "Star"
