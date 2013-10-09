@@ -103,7 +103,8 @@ class PlanetarySystem(object):
 		name = planet[index['name']]
 		phase = 0
 		size = float(planet[index['size']]) * self.radiusScale
-		obj = SphereShape.create(size, 4)
+		#obj = SphereShape.create(size, 4)
+		obj = BoxShape.create(size, size, size)
 		year = float(planet[index['year']])
 		day = float(planet[index['day']])
 		tilt = float(planet[index['obliquity']])
