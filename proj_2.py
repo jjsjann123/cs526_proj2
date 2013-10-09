@@ -17,7 +17,7 @@ class PlanetarySystem(object):
 	
 	orbitParameter = { 'name' : 'planetName', 'star' : 'hostName', 'orbit': 'semi-MajorAxis[AU]', 'size': 'pl_rade', 'year': 'orbitPeriod[years]', 'day': 'rotationPeriod[days]', 'obliquity': 'rotationTilt[deg]', 'inclination': 'inclination[deg]', 'eccentricity': 'eccentricity' }
 	index = {}
-	
+
 	def __init__(self):
 		self.starList = []
 		self.planetList = []
