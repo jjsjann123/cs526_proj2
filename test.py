@@ -20,8 +20,8 @@ q = list['Sun']
 
 #		container3D multiples:
 # ui = UiModule.createAndInitialize()
-# wf = ui.getWidgetFactory()
 # uiroot = ui.getUi()
+# wf = ui.getWidgetFactory()
 
 # windowContainer = wf.createContainer('multiple', uiroot, ContainerLayout.LayoutFree)
 # windowContainer.setPosition(Vector2(0, 0))
@@ -65,21 +65,46 @@ scene.createProgramFromString("multiple",
 	uniform float unif_Glow;
 	void main (void)
 	{
-		float vx = pow(abs((var_TexCoord.x - 0.5) * 2), unif_Glow);
-		float vy = pow(abs((var_TexCoord.y - 0.5) * 2), unif_Glow);
-
+		float x = var_TexCoord.x;
+		float y = var_TexCoord.y;
+		float vx = pow(1-x, unif_Glow);
+		
 		gl_FragColor.rgb = gl_Color.rgb;
-		gl_FragColor.a = (vx + vy);
+		gl_FragColor.a = (vx);
+		
+		if ( length(vec2(x,y) - vec2(orbit, 0.5)) < radius )
+		{
+			gl_FragColor.rgb = vec3(0.7,0.2,0.2);
+			gl_FragColor.a = 1.0;
+		}
+		
+		if (var_TexCoord.x < 0.005 || var_TexCoord.x > 0.995 || var_TexCoord.y < 0.02 || var_TexCoord.y > 0.98 )
+		{
+			gl_FragColor.rgb = vec3(0,0,0);
+			gl_FragColor.a = 1.0;
+		}
+		
 	}
 ''')
 
 multipleScale = 1.0;
 multiple = PlaneShape.create(10*multipleScale, 2*multipleScale)
-multiple.setPosition(Vector3(0, 3, -10))
+multiple.setPosition(Vector3(0, 4, -10))
 
 multiple.setEffect("multiple -d red -t")
 glowPower = multiple.getMaterial().addUniform('unif_Glow', UniformType.Float)
-glowPower.setFloat(10)
+glowPower.setFloat(20)
+
+multiple2 = PlaneShape.create(10*multipleScale, 2*multipleScale)
+multiple2.setPosition(Vector3(0, 0, -10))
+
+multiple2.setEffect("multiple -d red -t")
+glowPower = multiple2.getMaterial().addUniform('unif_Glow', UniformType.Float)
+glowPower.setFloat(40)
+glowPower = multiple2.getMaterial().addUniform('orbit', UniformType.Float)
+glowPower.setFloat(0.7)
+glowPower = multiple2.getMaterial().addUniform('radius', UniformType.Float)
+glowPower.setFloat(0.2)
 
 ##	draw planetary sytem:
 # drawPlanetarySystems(list)
