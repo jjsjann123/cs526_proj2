@@ -95,10 +95,21 @@ multiple.setEffect("multiple -d red -t")
 glowPower = multiple.getMaterial().addUniform('unif_Glow', UniformType.Float)
 glowPower.setFloat(20)
 
+shaderPath = "./shaders"
+multipleDraw = ProgramAsset()
+multipleDraw.name = "draw"
+multipleDraw.vertexShaderName = shaderPath + "/planet.vert"
+multipleDraw.fragmentShaderName = shaderPath + "/planet.frag"
+multipleDraw.geometryShaderName = shaderPath + "/planet.geom"
+multipleDraw.geometryOutVertices = 1
+multipleDraw.geometryInput = PrimitiveType.Points
+multipleDraw.geometryOutput = PrimitiveType.Points
+getSceneManager().addProgram(multipleDraw)
+
 multiple2 = PlaneShape.create(10*multipleScale, 2*multipleScale)
 multiple2.setPosition(Vector3(0, 0, -10))
 
-multiple2.setEffect("multiple -d red -t")
+multiple2.setEffect("draw -d red -t")
 glowPower = multiple2.getMaterial().addUniform('unif_Glow', UniformType.Float)
 glowPower.setFloat(40)
 glowPower = multiple2.getMaterial().addUniform('orbit', UniformType.Float)

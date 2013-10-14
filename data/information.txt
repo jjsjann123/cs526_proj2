@@ -21,3 +21,6 @@ To Do List:
 	2.	habitable zone
 	3.	small multiples	( panning?	switching system in the CAVE?		Shaders for border and star and habitable?)
 	4.	binary and trinary star system.
+
+keep constant:
+	getDefaultCamera().addChild(thingsOnTheWall)
