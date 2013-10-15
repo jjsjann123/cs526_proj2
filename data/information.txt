@@ -11,9 +11,13 @@ Mtrue = M[min] /
 
 http://en.wikipedia.org/wiki/Longitude_of_the_ascending_node
 
-obliquity
+#	obliquity		not important
 inclination
 ascending node
+
+#	for Stellar system
+right ascension
+declination
 
 
 To Do List:

@@ -100,10 +100,10 @@ multipleDraw = ProgramAsset()
 multipleDraw.name = "draw"
 multipleDraw.vertexShaderName = shaderPath + "/planet.vert"
 multipleDraw.fragmentShaderName = shaderPath + "/planet.frag"
-multipleDraw.geometryShaderName = shaderPath + "/planet.geom"
-multipleDraw.geometryOutVertices = 1
-multipleDraw.geometryInput = PrimitiveType.Points
-multipleDraw.geometryOutput = PrimitiveType.Points
+#multipleDraw.geometryShaderName = shaderPath + "/planet.geom"
+#multipleDraw.geometryOutVertices = 1
+#multipleDraw.geometryInput = PrimitiveType.Points
+#multipleDraw.geometryOutput = PrimitiveType.Points
 getSceneManager().addProgram(multipleDraw)
 
 multiple2 = PlaneShape.create(10*multipleScale, 2*multipleScale)
@@ -118,17 +118,16 @@ glowPower = multiple2.getMaterial().addUniform('radius', UniformType.Float)
 glowPower.setFloat(0.2)
 
 ##	draw planetary sytem:
-# drawPlanetarySystems(list)
+drawPlanetarySystems(list)
 
 
-# caveSystem = list['Sun']
+caveSystem = list['Sun']
 
-# def onUpdate(frame, t, dt):
-	# global caveSystem
-	# planetList = caveSystem.planetObjList
-	# if caveSystem != None:
-		# for name in planetList:
-			# caveSystem.planetRotate(dt * caveSystem.speedScale /planetList[name][2], name)
-			# planetList[name][1].yaw(dt * caveSystem.speedScale /planetList[name][3])
-
-# setUpdateFunction(onUpdate)
+def onUpdate(frame, t, dt):
+	global caveSystem
+	planetList = caveSystem.planetObjList
+	if caveSystem != None:
+		for name in planetList:
+			caveSystem.planetRotate(dt * caveSystem.speedScale /planetList[name][2], name)
+			planetList[name][1].yaw(dt * caveSystem.speedScale /planetList[name][3])
+setUpdateFunction(onUpdate)

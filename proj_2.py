@@ -36,11 +36,15 @@ class PlanetarySystem(object):
 		cls.panelNode = SceneNode.create('panelView')
 		cls.viewNode = SceneNode.create('mainView')
 	@staticmethod
-	def getElipsePosition(theta, majorAxis, eccentricity, inclination):
+	def getElipsePosition(theta, majorAxis, eccentricity, inclination, periastron = 0.0, ascendingNode = 0.0):
 		radius = majorAxis * (1 - eccentricity*eccentricity) / (1- eccentricity*cos(radians(theta)))
-		x = cos(radians(theta)) * cos(radians(inclination)) * radius
-		y = sin(radians(theta)) * radius
-		z = cos(radians(theta)) * sin(radians(inclination)) * radius
+		x = cos(radians(theta-periastron)) * cos(radians(inclination)) * radius
+		y = sin(radians(theta-periastron)) * radius
+		z = cos(radians(theta-periastron)) * sin(radians(inclination)) * radius
+		r = sqrt( x**2 + y**2 )
+		thetaPrime = radians(theta-periastron) + radians(ascendingNode)
+		x = r * cos(thetaPrime)
+		y = r * sin(thetaPrime)
 		return Vector3(x, z, y)
 	def setPlanetPosition(self, theta, name):
 		target = self.planetObjList[name]
@@ -113,6 +117,7 @@ class PlanetarySystem(object):
 	
 	def drawStar(self, star):
 		print "Star"
+		
 def readPlanetarySystemFile(filename, dir = None):
 	if ( dir != None ):
 		filename = dir + filename
