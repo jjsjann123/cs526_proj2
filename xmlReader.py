@@ -4,7 +4,10 @@ import os
 systemDir = "./systems/systems/"
 
 def getString(tag):
-	return tag.firstChild.data.encode('ascii', 'ignore')
+	if tag.firstChild != None:
+		return tag.firstChild.data.encode('ascii', 'ignore')
+	else:
+		return None
 
 def getChildTag(tag, tagNameList):
 	childList = tag.childNodes
