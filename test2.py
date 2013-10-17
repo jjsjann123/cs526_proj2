@@ -26,7 +26,7 @@ def setGlobalRadiusScale(scale):
 def setRotationSpeedScale(scale):
 	PlanetarySystem.speedScale = scale
 
-systemDir = "./systems/systems/"
+systemDir = "./stellar/"
 multiples.initialize()
 
 cam = getDefaultCamera()
