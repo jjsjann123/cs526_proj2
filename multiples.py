@@ -11,10 +11,12 @@ class multiples(object):
 	starColor = Uniform.create('star_color', UniformType.Color, 1)
 	cutOffX = Uniform.create('cutoff_x', UniformType.Float, 1)
 	cutOffY = Uniform.create('cutoff_y', UniformType.Float, 1)
+	offPanelSize = Uniform.create('off_size', UniformType.Float, 1)
 
-	multipleScale = 1.0
+	multipleScale = 0.5
 	height = 8.0
 	width = 40.0
+	offsize = 0.2
 
 	@staticmethod
 	def getData(str, type, default):
@@ -25,14 +27,17 @@ class multiples(object):
 
 	@classmethod
 	def initialize(cls):
-		width = cls.width
-		height = cls.height
-		cls.orbitScale.setFloat(2.0)
+		multipleScale = cls.multipleScale
+		width = cls.width * multipleScale
+		height = cls.height * multipleScale
+		
+		cls.orbitScale.setFloat(1.0)
 		cls.radiusScale.setFloat(1.0)
 		cls.glowPower.setFloat(20)
 		cls.starColor.setColor(Color(1, 0, 0, 1))
-		cls.cutOffX.setFloat(width-0.2)
-		cls.cutOffY.setFloat(height-0.4)
+		cls.cutOffX.setFloat(width - cls.offsize*multipleScale)
+		cls.cutOffY.setFloat(height - cls.offsize*multipleScale)
+		cls.offPanelSize.setFloat(cls.offsize * cls.multipleScale)
 		geom = ModelGeometry.create('stellar')
 		v1 = geom.addVertex(Vector3(0, height/2, 0))
 		geom.addColor(Color(0,1,0,0))
@@ -86,14 +91,13 @@ class multiples(object):
 		
 		planets = system['planets']
 		numOfPlanets = len(planets)
-		axis = [0.38, 0.72, 1, 5.2, 9.5, 30, 39.48]
-		radius = [ 0.035, 0.086, 0.09, 1, 0.83, 0.35, 0.216]
-		name = ['Mercury', 'Venus', 'Earth', 'Jupiter', 'Saturn', 'Neptune', 'Pluto']
 		geom = ModelGeometry.create('sun')
 		index = 0
 		for planet in planets:
-			geom.addVertex(Vector3(self.getData(planet['semimajoraxis'], float, 1), 0, 0.01))
-			geom.addColor(Color(1, numOfPlanets, index, self.getData(planet['radius'], float, 0.1)))
+			geom.addVertex(Vector3(self.multipleScale * self.getData(planet['semimajoraxis'], float, 1), 0, 0))
+			geom.addColor(Color(1, numOfPlanets, index, self.multipleScale * self.getData(planet['radius'], float, 0.1)))
+			name = planet['name']
+			print name
 			index += 1
 		geom.addPrimitive(PrimitiveType.Points, 0, numOfPlanets)
 		getSceneManager().addModel(geom)
@@ -105,6 +109,7 @@ class multiples(object):
 		material.attachUniform(self.radiusScale)
 		material.attachUniform(self.cutOffX)
 		material.attachUniform(self.cutOffY)
+		material.attachUniform(self.offPanelSize)
 
 		multiple.addChild(planetSystem)
 

@@ -8,4 +8,5 @@ void main (void)
 
     gl_FragColor = gl_Color;
 	gl_FragColor.a = sqrt(zz);
+	//gl_FragDepth = sqrt(zz);
 }

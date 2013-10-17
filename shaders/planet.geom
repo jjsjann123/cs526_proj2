@@ -5,13 +5,13 @@
 uniform float radiusScale;
 uniform float cutoff_x;
 uniform float cutoff_y;
+uniform float off_size;
 
 flat out float sphere_radius;
 
 void main(void)
 {
 	gl_FrontColor = gl_FrontColorIn[0];
-	float	outRangeHalfSize = 0.2;
 	float halfsize;
 	float ratioXPlus = 1.0;
 	float ratioXMin = -1.0;
@@ -47,10 +47,10 @@ void main(void)
 	{
 		float index = gl_FrontColorIn[0].b;
 		float length = gl_FrontColorIn[0].g;
-		halfsize = outRangeHalfSize;
+		halfsize = off_size;
 		//pos.y = cutoff_y *( 0.5 - index/length );
 		pos.y = cutoff_y * ( 0.5 - index/length );
-		pos.x = cutoff_x + outRangeHalfSize*2;
+		pos.x = cutoff_x + off_size * 4;
 		posXPlus = halfsize;
 		posXMin = -halfsize;
 		posY = halfsize;
