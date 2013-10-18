@@ -1,10 +1,11 @@
 from xml.dom import minidom
 import os
 
-systemDir = "./systems/systems/"
-
 def getString(tag):
-	return tag.firstChild.data.encode('ascii', 'ignore')
+	if tag.firstChild != None:
+		return tag.firstChild.data.encode('ascii', 'ignore')
+	else:
+		return None
 
 def getChildTag(tag, tagNameList):
 	childList = tag.childNodes
@@ -27,9 +28,6 @@ def readAllFilesInDir(targetDir):
 	return res
 
 def readFile(file):
-# file = systemDir+'HD 10180.xml'
-#file = systemDir+'Sun.xml'
-#if True:
 	fileHandle = open(file)
 	fileStr = ""
 	for line in fileHandle:
@@ -52,10 +50,11 @@ def readFile(file):
 		star = tag.getElementsByTagName("star")
 		if len(star) > 0:
 			star = star[0]
-			starInfo = getChildTag( star, tagNameList )
+			starInfo = [getChildTag( star, tagNameList )]
 
 			#	get planets list info
-			tagNameList = [ "name", "mass", "radius", "period", "semimajoraxis", "eccentricity", "inclination", "periastron", "ascendingnode", "discoverymethod" ]
+			#	'day' need to be added basically for solar system
+			tagNameList = [ "name", "mass", "radius", "period", "semimajoraxis", "eccentricity", "inclination", "periastron", "ascendingnode", "discoverymethod", "day", "axistilt" ]
 			planetsList = star.getElementsByTagName("planet")
 			if len(planetsList) > 0:
 				planetInfoList = []

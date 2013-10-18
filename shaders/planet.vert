@@ -1,22 +1,9 @@
-#version 150 compatibility
-#extension GL_ARB_gpu_shader5 : enable
-
-uniform float orbit;
-uniform float radius;
-varying vec2 var_TexCoord;
-varying vec3 var_Normal;
-varying vec3 var_EyeVector;
-
+uniform float orbitScale;
 
 void main(void)
 {
-	gl_Position = ftransform();
-	vec4 eyeSpacePosition = gl_ModelViewMatrix * gl_Vertex;
-	
-	var_TexCoord = gl_MultiTexCoord0.xy;
-	
-	var_EyeVector = -eyeSpacePosition.xyz;
-	var_Normal = gl_NormalMatrix * gl_Normal;
-	
+	vec4 pos = gl_Vertex;
+	pos.x = pos.x * orbitScale;
+	gl_Position = pos;
 	gl_FrontColor = gl_Color;
 }

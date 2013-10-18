@@ -12,7 +12,7 @@ class PlanetarySystem(object):
 	fineLevel = 8	#	fine level stays between 0 to 10
 	
 	orbitScale = 1.0
-	radiusScale = 0.05
+	radiusScale = 1.0
 	speedScale = 5.0
 	
 	orbitParameter = { 'name' : 'planetName', 'star' : 'hostName', 'orbit': 'semi-MajorAxis[AU]', 'size': 'pl_rade', 'year': 'orbitPeriod[years]', 'day': 'rotationPeriod[days]', 'obliquity': 'rotationTilt[deg]', 'inclination': 'inclination[deg]', 'eccentricity': 'eccentricity' }

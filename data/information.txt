@@ -28,3 +28,9 @@ To Do List:
 
 keep constant:
 	getDefaultCamera().addChild(thingsOnTheWall)
+	
+	
+missing stellar
+	82 G. Eridani
+	KEPLER-42
+	Nu2 Lupi
