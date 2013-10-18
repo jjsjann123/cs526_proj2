@@ -29,3 +29,12 @@ for t in q:
 		starType.update({type:0})
 	else:
 		print q[t]['stellar']['name']
+		
+print "system without radius"
+starRadius = []
+for t in q:
+	type = q[t]['star'][0]['radius']
+	if type != None:
+		starRadius.append(type)
+	else:
+		print q[t]['star']['radius']

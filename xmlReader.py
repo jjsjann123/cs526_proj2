@@ -5,7 +5,7 @@ import math
 
 massOfEarth = 0.0031457007
 radiusOfEarth = 0.091130294
-ratioOfStarRadius = 0.2
+ratioOfStarRadius = 1
 
 def getData(str, type, default):
 	if str == None:

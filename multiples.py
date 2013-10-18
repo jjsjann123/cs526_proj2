@@ -3,12 +3,16 @@ from cyclops import *
 from math import *
 from euclid import *
 
-class multiples(object):
 
+
+class multiples(object):
+	
+	stellarColorMap = { 'A': Color('white'), 'F': Color('#6599FF'), 'G': Color('yellow'), 'K': Color('orange'), 'M':Color('red') }
+	
 	orbitScale = Uniform.create('orbitScale', UniformType.Float, 1)
 	radiusScale = Uniform.create('radiusScale', UniformType.Float, 1)
-	glowPower = Uniform.create('unif_Glow', UniformType.Float, 1)
-	starColor = Uniform.create('star_color', UniformType.Color, 1)
+	#glowPower = Uniform.create('unif_Glow', UniformType.Float, 1)
+	#starColor = Uniform.create('star_color', UniformType.Color, 1)
 	cutOffX = Uniform.create('cutoff_x', UniformType.Float, 1)
 	cutOffY = Uniform.create('cutoff_y', UniformType.Float, 1)
 	offPanelSize = Uniform.create('off_size', UniformType.Float, 1)
@@ -17,6 +21,8 @@ class multiples(object):
 	height = 8.0
 	width = 40.0
 	offsize = 0.2
+	
+	radiusRatio = 20.0
 
 	@staticmethod
 	def getData(str, type, default):
@@ -33,8 +39,8 @@ class multiples(object):
 		
 		cls.orbitScale.setFloat(1.0)
 		cls.radiusScale.setFloat(1.0)
-		cls.glowPower.setFloat(20)
-		cls.starColor.setColor(Color(1, 0, 0, 1))
+		#cls.glowPower.setFloat(20)
+		#cls.starColor.setColor(Color(1, 0, 0, 1))
 		cls.cutOffX.setFloat(width - cls.offsize*multipleScale)
 		cls.cutOffY.setFloat(height - cls.offsize*multipleScale)
 		cls.offPanelSize.setFloat(cls.offsize * cls.multipleScale)
@@ -73,10 +79,14 @@ class multiples(object):
 
 	def __init__(self, system):
 		multiple = StaticObject.create('stellar')
+		multiple.setEffect("background -t")
+		
 		self.multiple = multiple
+		self.starRadius = system['star'][0]['radius']
+		self.radiusUniform = multiple.getMaterial().addUniform('unif_Glow', UniformType.Float)
+		self.radiusUniform.setFloat(sqrt(self.starRadius) * self.radiusRatio)
 		#multiple.setPosition(Vector3(width/2, 0, -10))
 		#multiple.setPosition(Vector3(-self.width/2, -8, -10))
-		multiple.setEffect("background -t")
 		#
 		#	might change it. 
 		#		Cause different star has different color
@@ -86,8 +96,10 @@ class multiples(object):
 		distance = self.getData(stellar['distance'], float, 100.0)
 		name = self.getData(stellar['name'], str, 'anonym')
 		spectraltype = self.getData(stellar['name'], str, 'G')
-		multiple.getMaterial().attachUniform(self.starColor)
-		multiple.getMaterial().attachUniform(self.glowPower)
+		#multiple.getMaterial().attachUniform(self.starColor)
+		multiple.getMaterial().addUniform('star_color', UniformType.Color).setColor(self.stellarColorMap[system['star'][0]['spectraltype']])
+		#multiple.getMaterial().attachUniform(self.glowPower)
+		
 		
 		planets = system['planets']
 		numOfPlanets = len(planets)
@@ -112,4 +124,3 @@ class multiples(object):
 		material.attachUniform(self.offPanelSize)
 
 		multiple.addChild(planetSystem)
-
