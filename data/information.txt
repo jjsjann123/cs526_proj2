@@ -19,6 +19,12 @@ ascending node
 right ascension
 declination
 
+# star spectral classification
+http://en.wikipedia.org/wiki/Stellar_classification
+using Harvard spectral classification -----> Surface Temperature.
+
+
+
 
 To Do List:
 	1.	navigation

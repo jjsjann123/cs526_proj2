@@ -23,7 +23,7 @@ def setGlobalRadiusScale(scale):
 	if systemInCave != None:
 		systemInCave.setRadiusScale()
 
-def setRotationSpeedScale(scale):
+def setRotationSpeedScale(scale):re
 	PlanetarySystem.speedScale = scale
 
 systemDir = "./stellar/"
