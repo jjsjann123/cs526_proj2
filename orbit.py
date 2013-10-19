@@ -11,11 +11,12 @@ class PlanetarySystem(object):
 	ratio = 10.0
 	lineThickness = 0.02
 
-	def __init__(self, star, planets):
+	def __init__(self, star, planets, name):
 		self.starList = star
 		self.planetList = planets
 		
-		self.sphereScaleNode = SceneNode.create(str(id(self)))
+		self.sphereScaleNode = SceneNode.create(name)
+		print "draw", " ", name
 		self.orbitLineList = []
 		self.orbitLine = LineSet.create()
 		self.orbitLine.setEffect('colored -e green')
@@ -112,7 +113,7 @@ class PlanetarySystem(object):
 		obj = BoxShape.create(radius, radius, radius)
 		obj.pitch(radians(tilt))
 		self.sphereScaleNode.addChild(obj)
-		self.planetObjList.update({ name: [phase, obj, year, day, majorAxis, inclination, eccentricity, periastron, ascendingnode]})
+		self.planetObjList.update({ name: [phase, obj, year, day, majorAxis, inclination, eccentricity, periastron, ascendingnode, radius]})
 		self.setPlanetPosition( 0, name)
 	def drawStar(self, star):
 		print "Star"

@@ -122,7 +122,7 @@ def readFile(file):
 					planetInfo['day'] = getData(planetInfo['day'], float, random.random()*3)
 					planetInfo['axistilt'] = getData(planetInfo['axistilt'], float, random.random()*30)
 					if (planetInfo['radius'] != None or planetInfo['mass'] == None ):
-						planetInfo['radius'] = getData( planetInfo['radius'], float, radiusOfEarth * 2 )
+						planetInfo['radius'] = getData( planetInfo['radius'], float, radiusOfEarth * 2)
 					else:
 						mass = float( planetInfo['mass'] );
 						planetInfo['radius'] = math.pow(mass/massOfEarth, 1.0/3) * radiusOfEarth
@@ -131,5 +131,4 @@ def readFile(file):
 					index += 1
 				
 	return { "stellar": stellarInfo, "star": starInfo, "planets": planetInfoList }
-
 #q = readAllFilesInDir(systemDir)
