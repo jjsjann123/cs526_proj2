@@ -40,3 +40,10 @@ missing stellar
 	82 G. Eridani
 	KEPLER-42
 	Nu2 Lupi
+	
+	
+To Do List:
+	0.		Wand interaction.
+
+	1.		Work on small multiples, get them all on the wall.
+	2.		Free move small multiples

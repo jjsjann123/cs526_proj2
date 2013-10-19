@@ -17,8 +17,8 @@ class multiples(object):
 	cutOffY = Uniform.create('cutoff_y', UniformType.Float, 1)
 	offPanelSize = Uniform.create('off_size', UniformType.Float, 1)
 
-	multipleScale = 0.5
-	height = 8.0
+	multipleScale = 0.05
+	height = 5.0
 	width = 40.0
 	offsize = 0.2
 	
@@ -83,6 +83,8 @@ class multiples(object):
 		
 		self.multiple = multiple
 		self.starRadius = system['star'][0]['radius']
+		#	This is supposed to be set to the parentNode for it to attach to.
+		self.parentNode = SceneNode.create('stellar'+system['stellar']['name'])
 		self.radiusUniform = multiple.getMaterial().addUniform('unif_Glow', UniformType.Float)
 		self.radiusUniform.setFloat(sqrt(self.starRadius) * self.radiusRatio)
 		#multiple.setPosition(Vector3(width/2, 0, -10))
