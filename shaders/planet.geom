@@ -6,12 +6,12 @@ uniform float radiusScale;
 uniform float cutoff_x;
 uniform float cutoff_y;
 uniform float off_size;
+uniform float radius_ratio;
 
 flat out float sphere_radius;
 
 void main(void)
 {
-	gl_FrontColor = gl_FrontColorIn[0];
 	float halfsize;
 	float ratioXPlus = 1.0;
 	float ratioXMin = -1.0;
@@ -23,7 +23,7 @@ void main(void)
 	if (pos.x < cutoff_x)
 	{
 		sphere_radius = radiusScale * gl_FrontColorIn[0].a;
-		halfsize = sphere_radius * 0.5;
+		halfsize = sphere_radius * radius_ratio;
 		posXPlus = halfsize;
 		posXMin = -halfsize;
 		posY = halfsize;
@@ -55,7 +55,18 @@ void main(void)
 		posXMin = -halfsize;
 		posY = halfsize;
 	}
-	
+	vec4 col;
+	if ( gl_FrontColorIn[0].r < 1.5)
+		col = vec4( 1, 0, 0, 1);
+	else if ( gl_FrontColorIn[0].r < 2.5)
+		col = vec4( 1, 1, 0, 1);
+	else if ( gl_FrontColorIn[0].r < 3.5)
+		col = vec4( 1, 0, 1, 1);
+	else if ( gl_FrontColorIn[0].r < 4.5)
+		col = vec4( 0, 0, 1, 1);
+	else
+		col = vec4( 0, 1, 1, 1);
+	gl_FrontColor = col;
 	gl_TexCoord[0].st = vec2(ratioXPlus,-ratioY);
 	gl_Position = pos;
 	gl_Position.xy += vec2(posXPlus, -posY);

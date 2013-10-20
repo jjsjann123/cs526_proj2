@@ -2,35 +2,74 @@ from omega import *
 from cyclops import *
 from math import *
 from euclid import *
+from fun import *
+import os
+
+scene = getSceneManager()
+textureSphere = ModelInfo()
+textureSphere.name = "textureSphere"
+textureSphere.path = "./model/sphere.obj"
+scene.loadModel(textureSphere)
+
+light = []
+light.append(Light.create())
+light[0].setLightType(LightType.Point)
+light[0].setColor(Color(0.0, 0.0, 0.0, 0.0))
+light[0].setPosition(Vector3(0.0, 0.0, 0.0))
+light[0].setEnabled(True)
+
+shaderPath = "./shaders/"
+habitZoneDraw = ProgramAsset()
+habitZoneDraw.name = "habit"
+habitZoneDraw.vertexShaderName = shaderPath + "habit.vert"
+habitZoneDraw.fragmentShaderName = shaderPath + "habit.frag"
+getSceneManager().addProgram(habitZoneDraw)
+
 
 class PlanetarySystem(object):
-	fineLevel = 8	#	fine level stays between 0 to 10
+	global light
+	global textureMap
+	global starTextureMap
+	global starTextureDir
+	global habitRange
+	global radiusOfEarth
+	fineLevel = 10	#	fine level stays between 0 to 10
 	orbitScale = 1.0
 	radiusScale = 1.0
 	speedScale = 1.0
 	ratio = 10.0
-	lineThickness = 0.02
-
+	lineThickness = 0.01
+	fontSize = 20
+	
+	
 	def __init__(self, star, planets, name):
 		self.starList = star
 		self.planetList = planets
-		
 		self.sphereScaleNode = SceneNode.create(name)
+		self.starNode = SceneNode.create(name+'_star')
+		self.allText = []
 		print "draw", " ", name
 		self.orbitLineList = []
 		self.orbitLine = LineSet.create()
-		self.orbitLine.setEffect('colored -e green')
+		self.orbitLine.setEffect('colored -e #FFFF66')
 		#	planetObjList stores the current angle, location and other information of each planet:
 		#		name: obj, theta, 
 		self.planetObjList = {}
 		#self.orbitScaleNode = SceneNode.create(id(self))
 	def setVisible(self, visFlag= False):
 		self.sphereScaleNode.setChildrenVisible(visFlag)
+		self.starNode.setChildrenVisible(visFlag)
 		self.orbitLine.setVisible(visFlag)
+		if visFlag == True:
+			light[0].setColor(Color(1.0, 1.0, 1.0, 1.0))
+			for text in self.allText:
+				text.setFacingCamera(getDefaultCamera())
+		else:
+			light[0].setColor(Color(0.0, 0.0, 0.0, 0.0))
 	def setRadiusScale(self):
 		list = self.planetObjList
 		for planet in list:
-			list[planet][1].setScale(Vector3(1,1,1)*self.radiusScale/self.orbitScale)
+			list[planet][1].setScale(Vector3(1,1,1)*self.radiusScale/self.orbitScale*list[planet][9])
 	def setOrbitScale(self):
 		self.orbitLine.setScale(Vector3(1,1,1)*self.orbitScale)
 		self.sphereScaleNode.setScale(Vector3(1,1,1)*self.orbitScale)
@@ -49,11 +88,9 @@ class PlanetarySystem(object):
 		x = cos(radians(theta-periastron)) * cos(radians(inclination)) * radius
 		y = sin(radians(theta-periastron)) * radius
 		z = cos(radians(theta-periastron)) * sin(radians(inclination)) * radius
-		r = sqrt( x**2 + y**2 )
-		thetaPrime = radians(theta-periastron) + radians(ascendingNode)
-		x = r * cos(thetaPrime)
-		y = r * sin(thetaPrime)
-		return Vector3(x, z, y)
+		#x = x * cos(ascendingNode) - y * sin(ascendingNode)
+		#y = x * sin(ascendingNode) + y * cos(ascendingNode)
+		return Vector3(x, z, y).rotate_around(Vector3(0,1,0), radians(ascendingNode))
 	def setPlanetPosition(self, theta, name):
 		target = self.planetObjList[name]
 		if theta > 360.0:
@@ -62,6 +99,7 @@ class PlanetarySystem(object):
 		target[1].setPosition( self.getElipsePosition( theta, target[4], target[6], target[5], target[7], target[8] ) )
 	def running(self, dt):
 		planetList = self.planetObjList
+		self.starNode.yaw(dt)
 		for name in planetList:
 			self.planetRotate(1000 * dt * self.speedScale /planetList[name][2], name)
 			planetList[name][1].yaw(radians(1000 * dt * self.speedScale /planetList[name][3]))
@@ -104,16 +142,81 @@ class PlanetarySystem(object):
 				theta += interval
 				line.setEnd (self.getElipsePosition(theta, majorAxis, eccentricity, inclination, periastron, ascendingnode) )
 				self.orbitLineList.append(line)
+				line.setThickness( self.lineThickness / self.orbitScale )
 		#
 		#	Draw planets
 		#
 		name = planet['name']
 		phase = 0
 		#obj = SphereShape.create(radius, 4)
-		obj = BoxShape.create(radius, radius, radius)
-		obj.pitch(radians(tilt))
-		self.sphereScaleNode.addChild(obj)
-		self.planetObjList.update({ name: [phase, obj, year, day, majorAxis, inclination, eccentricity, periastron, ascendingnode, radius]})
+		#obj = BoxShape.create(radius, radius, radius)
+		obj = StaticObject.create("textureSphere")
+		if name in textureMap:
+			obj.setEffect("textured -d ./model/" + name + ".jpg")
+		else:
+			obj.setEffect("textured -d " + randomTextureMap[hash_string(name,len(randomTextureMap))] )
+		#obj.setScale(radius, radius, radius)
+		#obj.pitch(radians(tilt))
+		
+		t = Text3D.create( 'fonts/arial.ttf', self.fontSize, name )
+		t.setPosition(Vector3(0 , 1.5, 0))
+		t.setFixedSize(True)
+		t.setFontResolution(80)
+		#t.setFacingCamera(getDefaultCamera())
+		self.allText.append(t)
+
+		axis = LineSet.create()
+		axis.setEffect("colored -e white")
+		line = axis.addLine()
+		line.setStart( Vector3( 0., -1.5, 0.))
+		line.setEnd( Vector3( 0., 1.5, 0.))
+		line.setThickness(self.lineThickness)
+		
+		targetRoot = SceneNode.create(name)
+		targetRoot.addChild(t)
+		targetRoot.addChild(obj)
+		targetRoot.setScale(Vector3(radius, radius, radius))
+		targetRoot.pitch(radians(tilt))
+		targetRoot.addChild(axis)
+		
+		#self.sphereScaleNode.addChild(obj)
+		#self.planetObjList.update({ name: [phase, obj, year, day, majorAxis, inclination, eccentricity, periastron, ascendingnode, radius]})
+		self.sphereScaleNode.addChild(targetRoot)
+		self.planetObjList.update({ name: [phase, targetRoot, year, day, majorAxis, inclination, eccentricity, periastron, ascendingnode, radius, line, axis]})
 		self.setPlanetPosition( 0, name)
 	def drawStar(self, star):
-		print "Star"
+		height = 1
+		obj = StaticObject.create("textureSphere")
+		radius = star['radius']
+		obj.setScale(Vector3(radius, radius, radius) * 0.3)
+		obj.setPosition(Vector3(0, height, 0))
+		obj.setEffect("textured -v emissive -d " + starTextureDir + starTextureMap[star['spectraltype']])
+		self.starNode.addChild(obj)
+		
+		t = Text3D.create( 'fonts/arial.ttf', self.fontSize*2, star['name'] )
+		t.setPosition(Vector3(0 , height - radius * 0.3 - 0.1 , 0))
+		t.setFixedSize(True)
+		t.setFontResolution(80)
+		#t.setFacingCamera(getDefaultCamera())
+		self.starNode.addChild(t)
+		self.allText.append(t)
+
+		axis = LineSet.create()
+		axis.setEffect("colored -e white")
+		line = axis.addLine()
+		line.setStart( Vector3( 0., height, 0.))
+		line.setEnd( Vector3( 0., 0, 0.))
+		line.setThickness(self.lineThickness)
+		self.starNode.addChild(axis)
+		
+		(min, max) = habitRange[star['spectraltype']]
+		habitZone = PlaneShape.create( max*2, max*2 )
+		habitZone.pitch(radians(270))
+		self.sphereScaleNode.addChild(habitZone)
+		habitZone.setEffect("habit -d #66CCFF -t")
+		habitZone.getMaterial().addUniform('ratio', UniformType.Float).setFloat(min/max)
+		habitZone = PlaneShape.create( max*2, max*2 )
+		habitZone.pitch(radians(90))
+		self.sphereScaleNode.addChild(habitZone)
+		habitZone.setEffect("habit -d #66CCFF -t")
+		habitZone.getMaterial().addUniform('ratio', UniformType.Float).setFloat(min/max)

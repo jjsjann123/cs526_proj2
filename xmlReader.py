@@ -6,6 +6,7 @@ import math
 massOfEarth = 0.0031457007
 radiusOfEarth = 0.091130294
 ratioOfStarRadius = 1
+test = []
 
 def getData(str, type, default):
 	if str == None:
@@ -119,14 +120,15 @@ def readFile(file):
 					planetInfo['periastron'] = getData( planetInfo['periastron'], float, 0.0 )
 					planetInfo['ascendingnode'] = getData( planetInfo['ascendingnode'], float, 0.0 )
 					planetInfo['period'] = getData(planetInfo['period'], float, 365.0 * index/2)
-					planetInfo['day'] = getData(planetInfo['day'], float, random.random()*3)
+					planetInfo['day'] = getData(planetInfo['day'], float, (random.random()+1)*3)
 					planetInfo['axistilt'] = getData(planetInfo['axistilt'], float, random.random()*30)
 					if (planetInfo['radius'] != None or planetInfo['mass'] == None ):
 						planetInfo['radius'] = getData( planetInfo['radius'], float, radiusOfEarth * 2)
 					else:
 						mass = float( planetInfo['mass'] );
 						planetInfo['radius'] = math.pow(mass/massOfEarth, 1.0/3) * radiusOfEarth
-					
+					if not planetInfo['discoverymethod'] in test:
+						test.append(planetInfo['discoverymethod'])
 					planetInfoList.append(planetInfo)
 					index += 1
 				

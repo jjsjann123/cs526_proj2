@@ -2,6 +2,12 @@ varying vec2 var_TexCoord;
 uniform float unif_Glow;
 uniform vec4 star_color;
 
+uniform float hab_min;
+uniform float hab_max;
+uniform float orbitScale;
+uniform float cutoff_x;
+uniform float orbit_ratio;
+
 void main (void)
 {
 	float x = var_TexCoord.x;
@@ -13,6 +19,15 @@ void main (void)
 	//gl_FragColor.rgb = vec3(1.0, 0.0, 0.0);
 	gl_FragColor.a = (vx);
 	gl_FragDepth = 0.1;
+	
+	float ratio = orbitScale * orbit_ratio;
+	float min = hab_min * ratio / cutoff_x;
+	float max = hab_max * ratio / cutoff_x;
+	
+	if (var_TexCoord.x > min && var_TexCoord.x < max)
+	{
+		gl_FragColor = vec4(0.259, 0.8, 1.0, 0.5);
+	}
 	
 	if (var_TexCoord.x < 0.005 || var_TexCoord.x > 0.995 || var_TexCoord.y < 0.02 || var_TexCoord.y > 0.98 )
 	{

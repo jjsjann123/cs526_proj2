@@ -1,30 +1,33 @@
 from omega import *
 from omegaToolkit import *
+from fun import *
 from xmlReader import *
 from orbit import *
 from multiples import *
+from galaxy import *
+from fun import *
 
 systemInCave = None
 allSystem = {}
-
-cam = getDefaultCamera()
-rootNode = SceneNode.create("systemOnWall")
-cam.addChild(rootNode)
-column = 8
-row = 8
+globalOrbitScale = 5.0
+globalRadiusScale = 0.5
 
 def updateFunction(frame, t, dt):
 	global systemInCave
 	if systemInCave != None:
 		systemInCave.running(dt)
 	
-def setGlobalOrbitScale(scale):
+def setGlobalOrbitScale(scale = 5.0):
+	global globalOrbitScale
+	globalOrbitScale = scale
 	multiples.orbitScale.setFloat(scale)
 	PlanetarySystem.orbitScale = scale
 	if systemInCave != None:
 		systemInCave.setOrbitScale()
 
-def setGlobalRadiusScale(scale):
+def setGlobalRadiusScale(scale = 0.2):
+	global globalRadiusScale
+	globalRadiusScale = scale
 	multiples.radiusScale.setFloat(scale)
 	PlanetarySystem.radiusScale = scale
 	if systemInCave != None:
@@ -35,16 +38,27 @@ def setRotationSpeedScale(scale):
 
 def switchSystemInCave(newSystem):
 	global systemInCave
-	if systemInCave == None:
-		newSystem.setVisible(True)
-	elif systemInCave == newSystem:
-		systemInCave.setVisible(True)
-	elif newSystem != None:
+	global galaxy
+	if newSystem == galaxy:
 		systemInCave.setVisible(False)
-		newSystem.setVisible(True)
+		galaxy.setChildrenVisible(True)
+		galaxy.setVisible(True)
 	else:
-		print "Clear system"
-	systemInCave = newSystem
+		if galaxy.isVisible():
+			galaxy.setVisible(False)
+			galaxy.setChildrenVisible(False)
+		if newSystem != None:
+			if systemInCave != None and systemInCave != newSystem:
+				systemInCave.setVisible(False)
+			newSystem.setVisible(True)
+		else:
+			if systemInCave != None:
+				systemInCave.setVisible(False)
+		systemInCave = newSystem
+		if systemInCave != None:
+			setGlobalOrbitScale(globalOrbitScale)
+			setGlobalRadiusScale(globalRadiusScale)
+	
 def moveMultiple(x, y, z):
 	print x, ' ', y, ' ', z
 		
@@ -70,22 +84,32 @@ def addMultipleToWall(multiple, h, v):
 		caveRadius = 3.25
 		screenCenter = multiple.parentNode
 		screenCenter.setPosition(Vector3(sin(hLoc*degreeConvert)*caveRadius, v * 0.29 + 0.41, cos(hLoc*degreeConvert)*caveRadius))
-		screenCenter.yaw(hLoc*degreeConvert)
-		screenCenter.addChild(multiple.multiple)
-		multiple.parentNode = screenCenter
+		screenCenter.yaw(hLoc*degreeConvert+radians(180))
 		rootNode.addChild(screenCenter)
 		return screenCenter
 
 #
 #	Read all files and initialize
 #
+
+cam = getDefaultCamera()
+rootNode = SceneNode.create("systemOnWall")
+#cam.addChild(rootNode)
+column = 8
+row = 8
 systemDir = "./stellar/"
 multiples.initialize()
 systemDic = readAllFilesInDir(systemDir)
 
-cam.setPosition(Vector3( 10, 2, 10 ))
-cam.yaw(radians(45))
-cam.pitch(radians(-10))
+multiples.radiusRatio.setFloat(4.0)
+multiples.orbitRatio.setFloat(8.0)
+
+skybox = Skybox()
+skybox.loadCubeMap('./model/skybox/', 'png')
+getSceneManager().setSkyBox(skybox)
+# cam.setPosition(Vector3( 10, 2, 10 ))
+# cam.yaw(radians(45))
+# cam.pitch(radians(-10))
 
 # for h in range(1,9):
 	# for v in range(1,9):
@@ -94,25 +118,31 @@ cam.pitch(radians(-10))
 def loadAllSystem():
 	h = 1;
 	v = 0;
+	global galaxy
+	galaxy = buildGalaxy(systemDic)
 	for systemName in systemDic:
 		stellar = PlanetarySystem(systemDic[systemName]['star'], systemDic[systemName]['planets'], systemName)
 		stellarMultiple = multiples(systemDic[systemName])
-		addMultipleToWall(stellarMultiple, h, v)
 		v+=1;
 		if v > row:
 			v = 1
 			h+=1
-		#addMultipleToWall(stellarMultiple, h, v)
+		addMultipleToWall(stellarMultiple, h, v)
 		stellar.drawSystem(False)
 		allSystem.update( {systemName: [stellar, stellarMultiple]} )
 loadAllSystem()
 switchSystemInCave(allSystem['Sun'][0])
 
-# systemName = "HD 10180"
+# galaxy = buildGalaxy(systemDic)
+# systemName = "Kepler-33"
 # stellar = PlanetarySystem(systemDic[systemName]['star'], systemDic[systemName]['planets'], systemName)
+# stellarMultiple = multiples(systemDic[systemName])
+# stellarMultiple.parentNode.setPosition(Vector3( -2, 2, -4))
 # stellar.drawSystem(False)
 # systemName = "Sun"
 # stellar2 = PlanetarySystem(systemDic[systemName]['star'], systemDic[systemName]['planets'], systemName)
+# stellarMultiple2 = multiples(systemDic[systemName])
+# stellarMultiple2.parentNode.setPosition(Vector3( 0.5, 2, -4))
 # stellar2.drawSystem(False)
 # switchSystemInCave(stellar2)
 setUpdateFunction(updateFunction)
