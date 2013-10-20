@@ -6,11 +6,14 @@ from orbit import *
 from multiples import *
 from galaxy import *
 from fun import *
+from wand import *
 
 systemInCave = None
 allSystem = {}
 globalOrbitScale = 5.0
 globalRadiusScale = 0.5
+
+containerToSystemMap = {}
 
 def updateFunction(frame, t, dt):
 	global systemInCave
@@ -76,8 +79,8 @@ def addMultipleToWall(multiple, h, v):
 	else:
 		print "construct"
 		multiple.multiple.setPosition(Vector3(-0.5, 0, 0.01) + multiple.multiple.getPosition())
-		if h >= 5:
-			h+=1
+		if h >= 4:
+			h+=3
 		v -= 1
 		hLoc = h + 0.5
 		degreeConvert = 36.0/360.0*2*pi #18 degrees per panel times 2 panels per viz = 36
@@ -94,8 +97,8 @@ def addMultipleToWall(multiple, h, v):
 
 cam = getDefaultCamera()
 rootNode = SceneNode.create("systemOnWall")
-#cam.addChild(rootNode)
-column = 8
+cam.addChild(rootNode)
+column = 6
 row = 8
 systemDir = "./stellar/"
 multiples.initialize()
@@ -119,6 +122,7 @@ def loadAllSystem():
 	h = 1;
 	v = 0;
 	global galaxy
+	global containerToSystemMap
 	galaxy = buildGalaxy(systemDic)
 	for systemName in systemDic:
 		stellar = PlanetarySystem(systemDic[systemName]['star'], systemDic[systemName]['planets'], systemName)
@@ -130,8 +134,21 @@ def loadAllSystem():
 		addMultipleToWall(stellarMultiple, h, v)
 		stellar.drawSystem(False)
 		allSystem.update( {systemName: [stellar, stellarMultiple]} )
+		containerToSystemMap.update( {stellarMultiple.multiple: [stellar]} )
+
+def pickSystem(node, distance):
+	global containerToSystemMap
+	print 'pick the system'
+	pick = containerToSystemMap.get(node)
+	if pick != None:
+		switchSystemInCave(pick)
+	
+	
+
 loadAllSystem()
 switchSystemInCave(allSystem['Sun'][0])
+attachUpdateFunction(updateFunction)
+pickMultiples = pickSystem
 
 # galaxy = buildGalaxy(systemDic)
 # systemName = "Kepler-33"
@@ -145,4 +162,6 @@ switchSystemInCave(allSystem['Sun'][0])
 # stellarMultiple2.parentNode.setPosition(Vector3( 0.5, 2, -4))
 # stellar2.drawSystem(False)
 # switchSystemInCave(stellar2)
-setUpdateFunction(updateFunction)
+
+
+

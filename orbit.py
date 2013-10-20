@@ -33,13 +33,14 @@ class PlanetarySystem(object):
 	global starTextureDir
 	global habitRange
 	global radiusOfEarth
+	global fontSize
 	fineLevel = 10	#	fine level stays between 0 to 10
 	orbitScale = 1.0
 	radiusScale = 1.0
 	speedScale = 1.0
 	ratio = 10.0
 	lineThickness = 0.01
-	fontSize = 20
+	
 	
 	
 	def __init__(self, star, planets, name):
@@ -158,7 +159,7 @@ class PlanetarySystem(object):
 		#obj.setScale(radius, radius, radius)
 		#obj.pitch(radians(tilt))
 		
-		t = Text3D.create( 'fonts/arial.ttf', self.fontSize, name )
+		t = Text3D.create( 'fonts/arial.ttf', fontSize, name )
 		t.setPosition(Vector3(0 , 1.5, 0))
 		t.setFixedSize(True)
 		t.setFontResolution(80)
@@ -193,7 +194,7 @@ class PlanetarySystem(object):
 		obj.setEffect("textured -v emissive -d " + starTextureDir + starTextureMap[star['spectraltype']])
 		self.starNode.addChild(obj)
 		
-		t = Text3D.create( 'fonts/arial.ttf', self.fontSize*2, star['name'] )
+		t = Text3D.create( 'fonts/arial.ttf', fontSize*2, star['name'] )
 		t.setPosition(Vector3(0 , height - radius * 0.3 - 0.1 , 0))
 		t.setFixedSize(True)
 		t.setFontResolution(80)

@@ -26,6 +26,6 @@ discoveryMethod = { 'RV': 1, 'transit': 2, 'imaging': 3, 'timing': 4, None: 5 }
 stellarColorMap = { 'A': Color('white'), 'F': Color('#6599FF'), 'G': Color('yellow'), 'K': Color('orange'), 'M':Color('red') }
 stellarMap = { 'A': (1, 1, 1), 'F': (65.0/255,99.0/255,1), 'G': (1.0, 1.0, 0.0), 'K': (1.0, 0.65, 0.0), 'M': (1.0, 0.0, 0.0) }
 
-fontSize = 20
+fontSize = 60
 
 galaxy = SceneNode.create('galaxy')

@@ -18,11 +18,10 @@ updateFuncList = []
 
 flagShowSpot = True
 pickMultiples = None
-wall = Sphere(Point3(0., 0., 0.), 3.45)
 spotLight = SphereShape.create(0.02, 4)
 spotLight.setPosition(Vector3(0,0,0))
 spotLight.setEffect("colored -e red")
-cam.addChild(spotLight)
+# cam.addChild(spotLight)
 
 def onEvent():
 	global cam
@@ -36,7 +35,6 @@ def onEvent():
 	global flagRotateLeftRight
 	global spotLight
 	global pickMultiples
-	global wall
 	e = getEvent()
 	type = e.getServiceType()
 	if(type == ServiceType.Pointer or type == ServiceType.Wand or type == ServiceType.Keyboard):
@@ -121,45 +119,39 @@ def onEvent():
 			flagRotateUpDown = lowHigh
 
 			if flagShowSpot:
-				pos = e.getPosition()
-				orient = e.getOrientation()
-				Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
-				res = Ray.intersect(wall)
-				# r = getRayFromEvent(e)
-				# if (r[0]): 
-					# ray = Ray3(Point3(r[1][0], r[1][1], r[1][2]), Vector3(r[2][0], r[2][1], r[2][2]))
-					# pos = cam.getPosition()
-					# wall = Sphere(Point3(pos[0], pos[1], pos[2]), 3.45)
-					# res = ray.intersect(wall)
-				if res != None:
-					hitSpot = res.p
-					print "moving sphere"
-					spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
+				# pos = e.getPosition()
+				# orient = e.getOrientation()
+				# Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
+				# res = Ray.intersect(wall)
+				r = getRayFromEvent(e)
+				if (r[0]): 
+					ray = Ray3(Point3(r[1][0], r[1][1], r[1][2]), Vector3(r[2][0], r[2][1], r[2][2]))
+					pos = cam.getPosition()
+					wall = Sphere(Point3(pos[0], pos[1], pos[2]), 3.45)
+					res = ray.intersect(wall)
+					if res != None:
+						hitSpot = res.p
+						print "moving sphere"
+						spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
 				if(e.isButtonDown(pick) and pickMultiples != None):
-					print 'try to pick'
-					pos = e.getPosition()
-					orient = e.getOrientation()
-					Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
-					if(r[0]): 
-						querySceneRay(Ray[0], Ray[1], pickMultiples)
+						if(r[0]): querySceneRay(r[1], r[2], pickMultiples)
 
 		if(type == ServiceType.Pointer):
 			if flagShowSpot:
-				pos = e.getPosition()
-				orient = e.getOrientation()
-				#Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
-				Ray = Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
-				res = Ray.intersect(wall)
-				# r = getRayFromEvent(e)
-				# if (r[0]): 
-					# ray = Ray3(Point3(r[1][0], r[1][1], r[1][2]), Vector3(r[2][0], r[2][1], r[2][2]))
-					# pos = cam.getPosition()
-					# wall = Sphere(Point3(pos[0], pos[1], pos[2]), 3.45)
-					# res = ray.intersect(wall)
-				if res != None:
-					hitSpot = res.p
-					print "moving sphere"
-					spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
+				# pos = e.getPosition()
+				# orient = e.getOrientation()
+				# Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
+				# res = Ray.intersect(wall)
+				r = getRayFromEvent(e)
+				if (r[0]): 
+					ray = Ray3(Point3(r[1][0], r[1][1], r[1][2]), Vector3(r[2][0], r[2][1], r[2][2]))
+					pos = cam.getPosition()
+					wall = Sphere(Point3(pos[0], pos[1], pos[2]), 3.45)
+					res = ray.intersect(wall)
+					if res != None:
+						hitSpot = res.p
+						print "moving sphere"
+						spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
 			
 def onUpdate(frame, t, dt):
 	global cam

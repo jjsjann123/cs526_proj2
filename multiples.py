@@ -4,8 +4,6 @@ from math import *
 from euclid import *
 from fun import *
 
-
-
 class multiples(object):
 	
 	global stellarColorMap
@@ -29,7 +27,7 @@ class multiples(object):
 	radiusRatioFloat = 4.0
 	
 	ratioRadius = 20.0
-	fontSize = 1.0
+	fontSize = 0.7
 	
 	@staticmethod
 	def getData(str, type, default):
@@ -85,11 +83,12 @@ class multiples(object):
 	def __init__(self, system):
 		multiple = StaticObject.create('stellar')
 		multiple.setEffect("background -t")
+		multiple.setSelectable(True)
 		
 		self.multiple = multiple
 		self.starRadius = system['star'][0]['radius']
 		#	This is supposed to be set to the parentNode for it to attach to.
-		self.parentNode = SceneNode.create('stellar'+system['stellar']['name'])
+		self.parentNode = SceneNode.create('stellar_'+system['stellar']['name'])
 		self.parentNode.addChild(multiple)
 		multiple.getMaterial().addUniform('unif_Glow', UniformType.Float).setFloat(self.starRadius*self.ratioRadius)
 
@@ -112,9 +111,10 @@ class multiples(object):
 		#info = 'Stellar System: ' + name + ' Distance: ' + str(round(distance,1))
 		info = name + ' distance from earth ' + str(round(distance,1))
 		t = Text3D.create( 'fonts/arial.ttf', self.fontSize * self.multipleScale, info )
-		t.setPosition(Vector3(0, height/2, 0))
 		t.setFixedSize(False)
 		t.setFontResolution(120)
+		t.setPosition(Vector3(-0.5, height/2, 0))
+		t.setPosition(Vector3(-0.5, height/2, 0))
 		self.parentNode.addChild(t)
 		planets = system['planets']
 		numOfPlanets = len(planets)
@@ -131,7 +131,6 @@ class multiples(object):
 			# else:
 				# obj.setEffect("textured -d " + randomTextureMap[hash_string(name,len(randomTextureMap))] )
 			# multiple.getMaterial().setDiffuseTexture(
-		
 		geom.addPrimitive(PrimitiveType.Points, 0, numOfPlanets)
 		getSceneManager().addModel(geom)
 		planetSystem = StaticObject.create(name)
@@ -144,5 +143,4 @@ class multiples(object):
 		material.attachUniform(self.offPanelSize)
 		material.attachUniform(self.orbitRatio)
 		material.attachUniform(self.radiusRatio)
-
 		multiple.addChild(planetSystem)
