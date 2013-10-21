@@ -227,7 +227,7 @@ def addMultipleToWall(multiple, h, v):
 
 cam = getDefaultCamera()
 rootNode = SceneNode.create("systemOnWall")
-#cam.addChild(rootNode)
+cam.addChild(rootNode)
 column = 6
 row = 8
 systemDir = "./stellar/"

@@ -153,7 +153,7 @@ class PlanetarySystem(object):
 		#obj = BoxShape.create(radius, radius, radius)
 		obj = StaticObject.create("textureSphere")
 		if name in textureMap:
-			obj.setEffect("textured -d ./model/" + name + ".jpg")
+			obj.setEffect("textured -d ./model/" + name.lower() + ".jpg")
 		else:
 			obj.setEffect("textured -d " + randomTextureMap[hash_string(name,len(randomTextureMap))] )
 		#obj.setScale(radius, radius, radius)

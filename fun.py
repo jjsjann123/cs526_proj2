@@ -19,9 +19,9 @@ randomTextureMap = []
 randomDir = './model/random/'
 for file in os.listdir(randomDir):
 	randomTextureMap.append(randomDir+file)
-textureMap = ['earth', 'mercury', 'venus', 'mars', 'saturn', 'jupiter', 'uranus', 'neptune']
+textureMap = ['Earth', 'Mercury', 'Venus', 'Mars', 'Saturn', 'Jupiter', 'Uranus', 'Neptune']
 starTextureDir = './model/star/'
-starTextureMap = {'A': 'a.jpg', 'F': 'f.png', 'G': 'g.png', 'K': 'k.png', 'M': 'm.png', 'O': 'o.png'}
+starTextureMap = {'A': 'astar.jpg', 'F': 'fstar.png', 'G': 'gstar.png', 'K': 'kstar.png', 'M': 'mstar.png', 'O': 'ostar.png'}
 
 
 habitRange = {'A' : (8.5, 12.5),'F' : (1.5,2.2), 'G' : (0.95, 1.4 ), 'K' : (0.38 , 0.56 ), 'M' : (0.08 ,0.12) }

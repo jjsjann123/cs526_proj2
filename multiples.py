@@ -89,7 +89,7 @@ class multiples(object):
 		#	This is supposed to be set to the parentNode for it to attach to.
 		self.parentNode = SceneNode.create('stellar_'+system['stellar']['name'])
 		self.parentNode.addChild(multiple)
-		multiple.getMaterial().addUniform('unif_Glow', UniformType.Float).setFloat(self.starRadius*self.ratioRadius)
+		multiple.getMaterial().addUniform('unif_Glow', UniformType.Float).setFloat(1/self.starRadius*self.ratioRadius)
 
 		stellar = system['stellar']
 		distance = self.getData(stellar['distance'], float, 100.0)
