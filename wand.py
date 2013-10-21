@@ -5,6 +5,15 @@ from math import *
 from euclid import *
 from fun import *
 
+
+appMenu.addButton("OrbitScale +", "changeOrbit(1.5)")
+appMenu.addButton("OrbitScale -", "changeOrbit(1.0/1.5)")
+appMenu.addButton("RadiusScale +", "changeRadius(1.5)")
+appMenu.addButton("RadiusScale -", "changeRadius(1.0/1.5)")
+
+appMenu.addButton("Show Galaxy", "switchSystemInCave(galaxy)")
+appMenu.addButton("Reset View", "resetView()")
+
 cam = getDefaultCamera()
 cam.setControllerEnabled(False)
 flagMoveBack = False
@@ -13,11 +22,11 @@ flagMoveUp = False
 flagMoveDown = False
 flagRotateUpDown = 0.0
 flagRotateLeftRight = 0.0
-speed = 1
+speed = 5
 omega = radians(30)
 updateFuncList = []
 
-flagShowSpot = True
+flagShowSpot = False
 spotLight = SphereShape.create(0.02, 4)
 spotLight.setPosition(Vector3(0,0,0))
 spotLight.setEffect("colored -e red")
@@ -34,6 +43,7 @@ def onEvent():
 	global spotLight
 	global pickMultiples
 	global targetList
+	global appMenu
 	e = getEvent()
 	type = e.getServiceType()
 	if(type == ServiceType.Pointer or type == ServiceType.Wand or type == ServiceType.Keyboard):
@@ -97,6 +107,14 @@ def onEvent():
 			move = EventFlags.Button7
 			lowHigh = e.getAxis(1)
 			leftRight = e.getAxis(0)
+			
+			if(e.isButtonDown(confirmButton)):
+				appMenu.getContainer().setPosition(e.getPosition())
+				appMenu.show()
+				appMenu.placeOnWand(e)
+			if(e.isButtonDown(quitButton)):
+				appMenu.hide()
+			e.setProcessed()
 
 			if(e.isButtonDown( forward)):
 				flagMoveForward = True
@@ -141,18 +159,27 @@ def onEvent():
 					# ray = cam.getOrientation() * orient * Ray3(Point3(wandPos[0], wandPos[1], wandPos[2]), Vector3( 0., 0., -1.))
 					# querySceneRay(ray.p, ray.v, pickMultiples)
 						
-				if(e.isButtonDown(pick) and targetList != [] and pickMultiples != None):
-					r = getRayFromEvent(e)
-					print "start finding"
-					for item in targetList:
-						hitData = hitNode(item, r[1], r[2])
-						if(hitData[0]):
-							pickMultiples(item)
-							break
+			if(e.isButtonDown(pick) and targetList != [] and pickMultiples != None):
+				r = getRayFromEvent(e)
+				print "start finding"
+				for item in targetList:
+					hitData = hitNode(item, r[1], r[2])
+					if(hitData[0]):
+						pickMultiples(item)
+						break
 						
 						
 
 		if(type == ServiceType.Pointer):
+			confirmButton = EventFlags.Button2
+			quitButton = EventFlags.Button1
+			if(e.isButtonDown(confirmButton)):
+				appMenu.getContainer().setPosition(e.getPosition())
+				appMenu.show()
+				appMenu.placeOnWand(e)
+			if(e.isButtonDown(quitButton)):
+				appMenu.hide()
+			e.setProcessed()
 			if flagShowSpot:
 				pos = e.getPosition()
 				orient = e.getOrientation()
