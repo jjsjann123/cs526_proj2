@@ -3,6 +3,7 @@ from cyclops import *
 from omegaToolkit import *
 from math import *
 from euclid import *
+from fun import *
 
 cam = getDefaultCamera()
 cam.setControllerEnabled(False)
@@ -17,8 +18,6 @@ omega = radians(30)
 updateFuncList = []
 
 flagShowSpot = True
-pickMultiples = None
-wall = Sphere(Point3(0., 0., 0.), 3.45)
 spotLight = SphereShape.create(0.02, 4)
 spotLight.setPosition(Vector3(0,0,0))
 spotLight.setEffect("colored -e red")
@@ -26,8 +25,6 @@ cam.addChild(spotLight)
 
 def onEvent():
 	global cam
-	global sphere
-	global sphere2
 	global flagMoveBack
 	global flagMoveForward
 	global flagMoveUp
@@ -36,7 +33,7 @@ def onEvent():
 	global flagRotateLeftRight
 	global spotLight
 	global pickMultiples
-	global wall
+	global targetList
 	e = getEvent()
 	type = e.getServiceType()
 	if(type == ServiceType.Pointer or type == ServiceType.Wand or type == ServiceType.Keyboard):
@@ -121,27 +118,39 @@ def onEvent():
 			flagRotateUpDown = lowHigh
 
 			if flagShowSpot:
-				# pos = e.getPosition()
-				# orient = e.getOrientation()
-				# Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
-				# res = Ray.intersect(wall)
-				r = getRayFromEvent(e)
-				if (r[0]): 
-					ray = Ray3(Point3(r[1][0], r[1][1], r[1][2]), Vector3(r[2][0], r[2][1], r[2][2]))
-					pos = cam.getPosition()
-					wall = Sphere(Point3(pos[0], pos[1], pos[2]), 3.45)
-					res = ray.intersect(wall)
-					if res != None:
-						hitSpot = res.p
-						print "moving sphere"
-						spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
-				if(e.isButtonDown(pick) and pickMultiples != None):
-					print 'try to pick'
-					pos = e.getPosition()
-					orient = e.getOrientation()
-					Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
-					if(r[0]): 
-						querySceneRay(Ray[0], Ray[1], pickMultiples)
+				pos = e.getPosition()
+				orient = e.getOrientation()
+				wandPos = Point3(pos[0], pos[1], pos[2])
+				Ray = orient * Ray3(wandPos, Vector3( 0., 0., -1.))
+				wall = Sphere(Point3(0., 0., 0.), 3.45)
+				res = Ray.intersect(wall)
+			# r = getRayFromEvent(e)
+			# if (r[0]): 
+				# ray = Ray3(Point3(r[1][0], r[1][1], r[1][2]), Vector3(r[2][0], r[2][1], r[2][2]))
+				# pos = cam.getPosition()
+				# wall = Sphere(Point3(pos[0], pos[1], pos[2]), 3.45)
+				# res = ray.intersect(wall)
+				if res != None:
+					hitSpot = res.p
+					spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
+				# if(e.isButtonDown(pick) and pickMultiples != None):
+					# camPos = cam.getPosition()
+					# pos = e.getPosition()
+					# wandPos = Point3(pos[0], pos[1], pos[2]) + Point3(camPos[0], camPos[1], camPos[2])
+					# orient = e.getOrientation()
+					# ray = cam.getOrientation() * orient * Ray3(Point3(wandPos[0], wandPos[1], wandPos[2]), Vector3( 0., 0., -1.))
+					# querySceneRay(ray.p, ray.v, pickMultiples)
+						
+				if(e.isButtonDown(pick) and targetList != [] and pickMultiples != None):
+					r = getRayFromEvent(e)
+					print "start finding"
+					for item in targetList:
+						hitData = hitNode(item, r[1], r[2])
+						if(hitData[0]):
+							pickMultiples(item)
+							break
+						
+						
 
 		if(type == ServiceType.Pointer):
 			if flagShowSpot:
@@ -149,6 +158,7 @@ def onEvent():
 				orient = e.getOrientation()
 				#Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
 				Ray = Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
+				wall = Sphere(Point3(0., 0., 0.), 3.45)
 				res = Ray.intersect(wall)
 				# r = getRayFromEvent(e)
 				# if (r[0]): 
@@ -160,7 +170,17 @@ def onEvent():
 					hitSpot = res.p
 					print "moving sphere"
 					spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
-			
+			# camPos = cam.getPosition()
+			# pos = e.getPosition()
+			# wandPos = Point3(pos[0], pos[1], pos[2]) + Point3(camPos[0], camPos[1], camPos[2])
+			# orient = e.getOrientation()
+			# print cam.getOrientation()
+			# print orient
+			# print wandPos
+			# ray = cam.getOrientation() * orient * Ray3(Point3(wandPos[0], wandPos[1], wandPos[2]), Vector3( 0., 0., -1.))
+			# print ray
+			# if pickMultiples != None:
+				# querySceneRay(ray.p, ray.v, pickMultiples)
 def onUpdate(frame, t, dt):
 	global cam
 	global speed
@@ -194,41 +214,41 @@ def attachUpdateFunction(func):
 setEventFunction(onEvent)
 setUpdateFunction(onUpdate)
 
-btest = True
-def ifHitAnything (node, distance):
-	global btest
-	if (node == None):
-		print "missed"
-	else:
-		print 'hit'
-		if btest:
-			node.setEffect("colored -e red")
-		else:
-			node.setEffect("colored -e blue")
-		btest = not btest
 
-pickMultiples = ifHitAnything
-sphere2 = SphereShape.create(1, 4)
-sphere2.setPosition(Vector3(0, 3, -10))
-sphere2.setSelectable(True)
-cam.addChild(sphere2)
-sphere3 = SphereShape.create(1, 4)
-sphere3.setPosition(Vector3(3, 3, -10))
+# pickMultiples = ifHitAnything
 
-geom = ModelGeometry.create('stellar')
-width = 2;
-height = 2;
-v1 = geom.addVertex(Vector3(0, height/2, -0.01))
-geom.addColor(Color(0,1,0,0))
-v2 = geom.addVertex(Vector3(0, -height/2, -0.01))
-geom.addColor(Color(0,0,0,0))
-v3 = geom.addVertex(Vector3(width, height/2, -0.01))
-geom.addColor(Color(1,1,0,0))
-v4 = geom.addVertex(Vector3(width, -height/2, -0.01))
-geom.addColor(Color(1,0,0,0))
-geom.addPrimitive(PrimitiveType.TriangleStrip, 0, 4)
-getSceneManager().addModel(geom)
-obj = StaticObject.create('stellar')
-obj.setPosition(Vector3(-3, 0, -10))
-obj.setEffect('colored -e yellow')
-obj.setSelectable(True)
+# sphere2 = SphereShape.create(1, 4)
+# sphere2.setPosition(Vector3(0, 3, -10))
+# sphere2.setSelectable(True)
+# cam.addChild(sphere2)
+# sphere3 = SphereShape.create(1, 4)
+# sphere3.setPosition(Vector3(3, 3, -10))
+
+# geom = ModelGeometry.create('stellar')
+# width = 2;
+# height = 0.25;
+# v1 = geom.addVertex(Vector3(0, height/2, -0.01))
+# geom.addColor(Color(0,1,0,0))
+# v2 = geom.addVertex(Vector3(0, -height/2, -0.01))
+# geom.addColor(Color(0,0,0,0))
+# v3 = geom.addVertex(Vector3(width, height/2, -0.01))
+# geom.addColor(Color(1,1,0,0))
+# v4 = geom.addVertex(Vector3(width, -height/2, -0.01))
+# geom.addColor(Color(1,0,0,0))
+# geom.addPrimitive(PrimitiveType.TriangleStrip, 0, 4)
+# getSceneManager().addModel(geom)
+
+# for h in xrange(0, 9):
+	# for v in xrange(0, 8):
+		# sphere = StaticObject.create('stellar')
+		# sphere.setSelectable(True)
+		# targetList.append(sphere)
+		# sphere.setPosition(Vector3(-0.5, 0, 0.01))
+		# hLoc = h + 0.5
+		# degreeConvert = 36.0/360.0*2*pi #18 degrees per panel times 2 panels per viz = 36
+		# caveRadius = 3.25
+		# screenCenter = SceneNode.create(str(v)+str(h))
+		# screenCenter.setPosition(Vector3(sin(hLoc*degreeConvert)*caveRadius, v * 0.29 + 0.41, cos(hLoc*degreeConvert)*caveRadius))
+		# screenCenter.yaw(hLoc*degreeConvert + radians(180))
+		# screenCenter.addChild(sphere)
+		# cam.addChild(screenCenter)

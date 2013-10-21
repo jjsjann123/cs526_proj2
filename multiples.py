@@ -83,9 +83,8 @@ class multiples(object):
 	def __init__(self, system):
 		multiple = StaticObject.create('stellar')
 		multiple.setEffect("background -t")
-		multiple.setSelectable(True)
-		
 		self.multiple = multiple
+		self.multiple.setSelectable(True)
 		self.starRadius = system['star'][0]['radius']
 		#	This is supposed to be set to the parentNode for it to attach to.
 		self.parentNode = SceneNode.create('stellar_'+system['stellar']['name'])

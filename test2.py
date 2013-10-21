@@ -7,12 +7,12 @@ from multiples import *
 from galaxy import *
 from wand import *
 
-systemInCave = None
+
 allSystem = {}
 globalOrbitScale = 5.0
 globalRadiusScale = 0.5
+getSceneManager().displayWand(0, 1)
 
-containerToSystemMap = {}
 
 def updateFunction(frame, t, dt):
 	global systemInCave
@@ -40,32 +40,6 @@ def setGlobalRadiusScale(scale = 0.2):
 def setRotationSpeedScale(scale):
 	PlanetarySystem.speedScale = scale
 
-def switchSystemInCave(newSystem):
-	global systemInCave
-	global galaxy
-	global galaxyCore
-	if newSystem == galaxy:
-		systemInCave.setVisible(False)
-		galaxy.setChildrenVisible(True)
-		galaxy.setVisible(True)
-		galaxyCore.getMaterial().setDepthTestEnabled(False)
-		
-	else:
-		if galaxy.isVisible():
-			galaxy.setVisible(False)
-			galaxy.setChildrenVisible(False)
-		if newSystem != None:
-			if systemInCave != None and systemInCave != newSystem:
-				systemInCave.setVisible(False)
-			newSystem.setVisible(True)
-		else:
-			if systemInCave != None:
-				systemInCave.setVisible(False)
-		systemInCave = newSystem
-		if systemInCave != None:
-			setGlobalOrbitScale(globalOrbitScale)
-			setGlobalRadiusScale(globalRadiusScale)
-	
 def moveMultiple(x, y, z):
 	print x, ' ', y, ' ', z
 		
@@ -128,6 +102,7 @@ def loadAllSystem():
 	global galaxy
 	global galaxyCore
 	global containerToSystemMap
+	global targetList
 	(galaxy,galaxyCore) = buildGalaxy(systemDic)
 	for systemName in systemDic:
 		stellar = PlanetarySystem(systemDic[systemName]['star'], systemDic[systemName]['planets'], systemName)
@@ -139,21 +114,17 @@ def loadAllSystem():
 		addMultipleToWall(stellarMultiple, h, v)
 		stellar.drawSystem(False)
 		allSystem.update( {systemName: [stellar, stellarMultiple]} )
+		stellarMultiple.multiple.setSelectable(True)
+		targetList.append(stellarMultiple.multiple)
 		containerToSystemMap.update( {stellarMultiple.multiple: [stellar]} )
 		if v == row and h == column:
 			break;
 
-def pickSystem(node, distance):
-	global containerToSystemMap
-	print 'pick the system'
-	pick = containerToSystemMap.get(node)
-	if pick != None:
-		switchSystemInCave(pick)
+
 
 loadAllSystem()
 switchSystemInCave(allSystem['Sun'][0])
 attachUpdateFunction(updateFunction)
-pickMultiples = pickSystem
 
 # galaxy = buildGalaxy(systemDic)
 # systemName = "Kepler-33"

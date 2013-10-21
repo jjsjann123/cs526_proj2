@@ -30,3 +30,55 @@ fontSize = 60
 
 galaxy = SceneNode.create('galaxy')
 galaxyCore = None
+systemInCave = None
+containerToSystemMap = {}
+targetList = []
+
+def switchSystemInCave(newSystem):
+	global systemInCave
+	global galaxy
+	global galaxyCore
+	if newSystem == galaxy:
+		systemInCave.setVisible(False)
+		galaxy.setChildrenVisible(True)
+		galaxy.setVisible(True)
+		galaxyCore.getMaterial().setDepthTestEnabled(False)
+	else:
+		if galaxy.isVisible():
+			galaxy.setVisible(False)
+			galaxy.setChildrenVisible(False)
+		if newSystem != None:
+			if systemInCave != None and systemInCave != newSystem:
+				systemInCave.setVisible(False)
+			newSystem.setVisible(True)
+		else:
+			if systemInCave != None:
+				systemInCave.setVisible(False)
+		systemInCave = newSystem
+		if systemInCave != None:
+			setGlobalOrbitScale(globalOrbitScale)
+			setGlobalRadiusScale(globalRadiusScale)
+
+def pickSystem(node):
+	global containerToSystemMap
+	print 'pick the system'
+	pick = containerToSystemMap.get(node)
+	if pick != None:
+		print 'pick ', pick
+		print 'node ', node
+		switchSystemInCave(pick)
+		
+btest = True
+def ifHitAnything (node):
+	global btest
+	if (node == None):
+		print "missed"
+	else:
+		print 'hit'
+		if btest:
+			node.setEffect("colored -e red")
+		else:
+			node.setEffect("colored -e blue")
+		btest = not btest
+
+pickMultiples = pickSystem
