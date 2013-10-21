@@ -5,12 +5,17 @@ from xmlReader import *
 from orbit import *
 from multiples import *
 from galaxy import *
+from stars import *
 
 newSystemInCave = None
 allSystem = {}
 globalOrbitScale = 5.0
 globalRadiusScale = 0.5
 getSceneManager().displayWand(0, 1)
+getSceneManager().setBackgroundColor(Color('black'))
+sky = getStar()
+skyScale = 6
+sky.setScale(Vector3(1,1,1)*skyScale * globalOrbitScale)
 
 mm = MenuManager.createAndInitialize()
 appMenu = mm.createMenu("contolPanel")
@@ -99,8 +104,11 @@ def attachUpdateFunction(func):
 
 def changeOrbit(ratio):
 	global globalOrbitScale
+	global sky
+	global skyScale
 	globalOrbitScale *= ratio
 	setGlobalOrbitScale(globalOrbitScale)
+	
 	
 def changeRadius(ratio):
 	global globalRadiusScale
@@ -143,19 +151,22 @@ def updateFunction(frame, t, dt):
 	global systemInCave
 	global newSystemInCave
 	global galaxy
+	global sky
 	if newSystemInCave != None and newSystemInCave != systemInCave:
 		print "switch it"
 		switchSystemInCave(newSystemInCave)
 		newSystemInCave = None
 	if systemInCave != None and systemInCave != galaxy:
 		systemInCave.running(dt)
-	galaxy.yaw(dt*radians(10))
+	galaxy.yaw(dt*radians(5))
+	sky.yaw(dt*radians(5))
 	
 def setGlobalOrbitScale(scale = 5.0):
 	global globalOrbitScale
 	globalOrbitScale = scale
 	multiples.orbitScale.setFloat(scale)
 	PlanetarySystem.orbitScale = scale
+	sky.setScale(Vector3(1,1,1)*scale*skyScale)
 	if systemInCave != None:
 		systemInCave.setOrbitScale()
 
@@ -206,7 +217,7 @@ def addMultipleToWall(multiple, h, v):
 
 cam = getDefaultCamera()
 rootNode = SceneNode.create("systemOnWall")
-cam.addChild(rootNode)
+#cam.addChild(rootNode)
 column = 6
 row = 8
 systemDir = "./stellar/"
@@ -216,9 +227,9 @@ systemDic = readAllFilesInDir(systemDir)
 multiples.radiusRatio.setFloat(4.0)
 multiples.orbitRatio.setFloat(8.0)
 
-skybox = Skybox()
-skybox.loadCubeMap('./model/skybox/', 'png')
-getSceneManager().setSkyBox(skybox)
+# skybox = Skybox()
+# skybox.loadCubeMap('./model/skybox/', 'png')
+# getSceneManager().setSkyBox(skybox)
 cam.setPosition(Vector3( 10, 2, 10 ))
 cam.yaw(radians(45))
 cam.pitch(radians(-10))
@@ -395,7 +406,7 @@ def onEvent():
 		if(type == ServiceType.Pointer):
 			confirmButton = EventFlags.Button2
 			quitButton = EventFlags.Button1
-			newSystemInCave = containerToSystemMap.get(targetList[2])
+			#newSystemInCave = containerToSystemMap.get(targetList[2])
 			if(e.isButtonDown(confirmButton)):
 				appMenu.getContainer().setPosition(e.getPosition())
 				appMenu.show()
@@ -438,7 +449,7 @@ setUpdateFunction(onUpdate)
 loadAllSystem()
 switchSystemInCave(allSystem['Sun'][0])
 attachUpdateFunction(updateFunction)
-
+sky.getMaterial().setDepthTestEnabled(False)
 # galaxy = buildGalaxy(systemDic)
 # systemName = "Kepler-33"
 # stellar = PlanetarySystem(systemDic[systemName]['star'], systemDic[systemName]['planets'], systemName)
