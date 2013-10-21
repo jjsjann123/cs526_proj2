@@ -12,8 +12,7 @@ flat out float sphere_radius;
 
 void main(void)
 {
-	if ( gl_FrontColorIn[0].r > 9.5)
-		discard;
+	
 	float halfsize;
 	float ratioXPlus = 1.0;
 	float ratioXMin = -1.0;
@@ -66,8 +65,10 @@ void main(void)
 		col = vec4( 1, 0, 1, 1);
 	else if ( gl_FrontColorIn[0].r < 4.5)
 		col = vec4( 0, 0, 1, 1);
-	else
+	else if ( gl_FrontColorIn[0].r < 5.5)
 		col = vec4( 0, 1, 1, 1);
+	else
+		col = vec4( 0, 0, 0, 0);
 	gl_FrontColor = col;
 	gl_TexCoord[0].st = vec2(ratioXPlus,-ratioY);
 	gl_Position = pos;
