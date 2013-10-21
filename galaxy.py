@@ -22,12 +22,12 @@ def buildGalaxy(systems):
 		y = distance * sin(beta)
 		z = distance * cos(beta) * sin(alpha)
 		galaxyModel.addVertex ( Vector3(x, y, z))
-		t = Text3D.create( 'fonts/arial.ttf', fontSize, stellar['name'] )
-		t.setPosition(Vector3(x, y, z))
-		t.setFixedSize(True)
-		t.setFontResolution(120)
-		t.setFacingCamera(getDefaultCamera())
-		galaxy.addChild(t)
+		# t = Text3D.create( 'fonts/arial.ttf', fontSize, stellar['name'] )
+		# t.setPosition(Vector3(x, y, z))
+		# t.setFixedSize(True)
+		# t.setFontResolution(120)
+		# t.setFacingCamera(getDefaultCamera())
+		# galaxy.addChild(t)
 		
 		rgb = stellarMap[star[0]['spectraltype']]
 		
@@ -49,7 +49,7 @@ def buildGalaxy(systems):
 	galaxyCore = StaticObject.create('galaxyModel')
 	inst = galaxyCore
 	inst.setPosition(Vector3(0,0,0))
-	inst.getMaterial().setProgram('stars')
+	inst.getMaterial().setPwwwwwsssssssssssssssrogram('stars')
 	inst.getMaterial().setTransparent(True)
 	inst.getMaterial().setAdditive(True)
 	inst.getMaterial().setDepthTestEnabled(True)

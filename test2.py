@@ -11,6 +11,7 @@ newSystemInCave = None
 allSystem = {}
 globalOrbitScale = 5.0
 globalRadiusScale = 0.5
+globalRotationScale = 1.0
 getSceneManager().displayWand(0, 1)
 getSceneManager().setBackgroundColor(Color('black'))
 sky = getStar()
@@ -24,6 +25,8 @@ appMenu.addButton("OrbitScale +", "changeOrbit(1.5)")
 appMenu.addButton("OrbitScale -", "changeOrbit(1.0/1.5)")
 appMenu.addButton("RadiusScale +", "changeRadius(1.5)")
 appMenu.addButton("RadiusScale -", "changeRadius(1.0/1.5)")
+appMenu.addButton("RotationSpeed +", "changeRotation(1.3)")
+appMenu.addButton("RotationSpeed -", "changeRotation(1.0/1.3)")
 
 appMenu.addButton("Show Galaxy", "switchSystemInCave(galaxy)")
 appMenu.addButton("Reset View", "resetView()")
@@ -109,11 +112,14 @@ def changeOrbit(ratio):
 	globalOrbitScale *= ratio
 	setGlobalOrbitScale(globalOrbitScale)
 	
-	
 def changeRadius(ratio):
 	global globalRadiusScale
 	globalRadiusScale *= ratio
 	setGlobalRadiusScale(globalRadiusScale)
+
+def changeRotation(ratio):
+	global globalRotationScale
+	globalRotationScale *= ratio
 	
 def resetView():
 	cam = getDefaultCamera()
@@ -152,14 +158,15 @@ def updateFunction(frame, t, dt):
 	global newSystemInCave
 	global galaxy
 	global sky
+	global globalRotationScale
 	if newSystemInCave != None and newSystemInCave != systemInCave:
 		print "switch it"
 		switchSystemInCave(newSystemInCave)
 		newSystemInCave = None
 	if systemInCave != None and systemInCave != galaxy:
-		systemInCave.running(dt)
-	galaxy.yaw(dt*radians(5))
-	sky.yaw(dt*radians(5))
+		systemInCave.running(dt*globalRotationScale)
+	galaxy.yaw(dt*radians(5)*globalRotationScale)
+	sky.yaw(dt*radians(5)*globalRotationScale)
 	
 def setGlobalOrbitScale(scale = 5.0):
 	global globalOrbitScale
@@ -167,7 +174,7 @@ def setGlobalOrbitScale(scale = 5.0):
 	multiples.orbitScale.setFloat(scale)
 	PlanetarySystem.orbitScale = scale
 	sky.setScale(Vector3(1,1,1)*scale*skyScale)
-	if systemInCave != None:
+	if systemInCave != None and systemInCave != galaxy:
 		systemInCave.setOrbitScale()
 
 def setGlobalRadiusScale(scale = 0.2):
@@ -175,9 +182,12 @@ def setGlobalRadiusScale(scale = 0.2):
 	globalRadiusScale = scale
 	multiples.radiusScale.setFloat(scale)
 	PlanetarySystem.radiusScale = scale
-	if systemInCave != None:
+	if systemInCave != None and systemInCave != galaxy:
 		systemInCave.setRadiusScale()
 
+def setGlobalRotationScale(scale = 1.0):
+	global globalRotationScale
+	globalRotationScale = scale
 
 def setRotationSpeedScale(scale):
 	PlanetarySystem.speedScale = scale
