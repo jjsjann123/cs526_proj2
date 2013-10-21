@@ -460,7 +460,7 @@ loadAllSystem()
 switchSystemInCave(allSystem['Sun'][0])
 attachUpdateFunction(updateFunction)
 sky.getMaterial().setDepthTestEnabled(False)
-# galaxy = buildGalaxy(systemDic)
+# (galaxy, galaxyCore) = buildGalaxy(systemDic)
 # systemName = "Kepler-33"
 # stellar = PlanetarySystem(systemDic[systemName]['star'], systemDic[systemName]['planets'], systemName)
 # stellarMultiple = multiples(systemDic[systemName])
