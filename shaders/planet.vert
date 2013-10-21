@@ -9,10 +9,6 @@ void main(void)
 	float ratio = orbitScale * orbit_ratio;
 	//pos.x = pos.x * orbitScale;
 	pos.x = pos.x * ratio;
-	if ( pos.x >= cutoff_x )
-	{
-		pos.x = cutoff_x;
-	}
 	gl_Position = pos;
 	gl_FrontColor = gl_Color;
 }

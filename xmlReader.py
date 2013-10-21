@@ -119,7 +119,7 @@ def readFile(file):
 					planetInfo['eccentricity'] = getData( planetInfo['eccentricity'], float, 0.0 )
 					planetInfo['periastron'] = getData( planetInfo['periastron'], float, 0.0 )
 					planetInfo['ascendingnode'] = getData( planetInfo['ascendingnode'], float, 0.0 )
-					planetInfo['period'] = getData(planetInfo['period'], float, 365.0 * index/2)
+					planetInfo['period'] = getData(planetInfo['period'], float, 365.0 * (index+1)/2)
 					planetInfo['day'] = getData(planetInfo['day'], float, (random.random()+1)*3)
 					planetInfo['axistilt'] = getData(planetInfo['axistilt'], float, random.random()*30)
 					if (planetInfo['radius'] != None or planetInfo['mass'] == None ):

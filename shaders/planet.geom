@@ -12,6 +12,8 @@ flat out float sphere_radius;
 
 void main(void)
 {
+	if ( gl_FrontColorIn[0].r > 9.5)
+		discard;
 	float halfsize;
 	float ratioXPlus = 1.0;
 	float ratioXMin = -1.0;

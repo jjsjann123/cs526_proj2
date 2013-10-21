@@ -122,15 +122,17 @@ class multiples(object):
 		for planet in planets:
 			geom.addVertex(Vector3(self.multipleScale * self.getData(planet['semimajoraxis'], float, 1), 0, 0.01))
 			geom.addColor(Color(discoveryMethod[planet['discoverymethod']], numOfPlanets, index, self.multipleScale * self.getData(planet['radius'], float, 0.1)))
-			pName = planet['name']
-			print pName
+			# pName = planet['name']
+			# print pName
 			index += 1
 			# if name in textureMap:
 				# obj.setEffect("textured -d ./model/" + name + ".jpg")
 			# else:
 				# obj.setEffect("textured -d " + randomTextureMap[hash_string(name,len(randomTextureMap))] )
 			# multiple.getMaterial().setDiffuseTexture(
-		geom.addPrimitive(PrimitiveType.Points, 0, numOfPlanets)
+		geom.addVertex(Vector3(width, 0., 0.01))
+		geom.addColor(Color(10.0, 0.0, 0.0, 0.0))
+		geom.addPrimitive(PrimitiveType.Points, 0, numOfPlanets+1)
 		getSceneManager().addModel(geom)
 		planetSystem = StaticObject.create(name)
 		planetSystem.setEffect("planet -t")
