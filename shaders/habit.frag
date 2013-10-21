@@ -14,10 +14,11 @@ void main (void)
 	{
 		discard;
 	}
-	if ( sqrt(z) < ratio )
+	float q = sqrt(z);
+	if ( q < ratio )
 	{
 		discard;
 	}
 	gl_FragColor.rgb = gl_Color.rgb;
-	gl_FragColor.a = 0.7;
+	gl_FragColor.a = 1.0 - abs(q - (1+ratio)/2)/(1-ratio)*2;
 }

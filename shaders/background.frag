@@ -26,7 +26,10 @@ void main (void)
 	
 	if (var_TexCoord.x > min && var_TexCoord.x < max)
 	{
-		gl_FragColor = vec4(0.259, 0.8, 1.0, 0.5);
+		float inter = var_TexCoord.x;
+		//gl_FragColor = vec4(0.259, 0.8, 1.0, 0.5);
+		gl_FragColor.rgb = vec3(0.259, 0.8, 1.0);
+		gl_FragColor.a = 1.0 - abs(inter - (min+max)/2)/(max-min)*2;
 	}
 	
 	if (var_TexCoord.x < 0.005 || var_TexCoord.x > 0.995 || var_TexCoord.y < 0.02 || var_TexCoord.y > 0.98 )

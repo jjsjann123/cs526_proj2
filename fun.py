@@ -19,7 +19,7 @@ randomTextureMap = []
 randomDir = './model/random/'
 for file in os.listdir(randomDir):
 	randomTextureMap.append(randomDir+file)
-textureMap = ['earth', 'mercury', 'venus', 'mars', 'saturn', 'jupiter', 'uranus', 'neptune']
+textureMap = ['Earth', 'Mercury', 'Venus', 'Mars', 'Saturn', 'Jupiter', 'Uranus', 'Neptune']
 starTextureDir = './model/star/'
 starTextureMap = {'A': 'a.jpg', 'F': 'f.png', 'G': 'g.png', 'K': 'k.png', 'M': 'm.png', 'O': 'o.png'}
 
