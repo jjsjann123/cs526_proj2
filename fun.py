@@ -34,5 +34,3 @@ stellarColorMap = { 'A': Color('white'), 'F': Color('#6599FF'), 'G': Color('yell
 stellarMap = { 'A': (1, 1, 1), 'F': (65.0/255,99.0/255,1), 'G': (1.0, 1.0, 0.0), 'K': (1.0, 0.65, 0.0), 'M': (1.0, 0.0, 0.0) }
 
 fontSize = 60
-
-
