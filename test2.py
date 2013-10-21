@@ -7,7 +7,6 @@ from multiples import *
 from galaxy import *
 
 newSystemInCave = None
-
 allSystem = {}
 globalOrbitScale = 5.0
 globalRadiusScale = 0.5
@@ -111,7 +110,7 @@ def changeRadius(ratio):
 def resetView():
 	cam = getDefaultCamera()
 	cam.setPosition(Vector3( 10, 2, 10 ))
-	cam.yaw(radians(45))
+	cam.setPitchYawRoll(Vector3(0, radians(45), 0))
 	cam.pitch(radians(-10))
 
 def switchSystemInCave(newSystem):
@@ -123,6 +122,7 @@ def switchSystemInCave(newSystem):
 		galaxy.setChildrenVisible(True)
 		galaxy.setVisible(True)
 		galaxyCore.getMaterial().setDepthTestEnabled(False)
+		systemInCave = galaxy
 	else:
 		if galaxy.isVisible():
 			galaxy.setVisible(False)
@@ -147,7 +147,7 @@ def updateFunction(frame, t, dt):
 		print "switch it"
 		switchSystemInCave(newSystemInCave)
 		newSystemInCave = None
-	if systemInCave != None:
+	if systemInCave != None and systemInCave != galaxy:
 		systemInCave.running(dt)
 	galaxy.yaw(dt*radians(10))
 	
@@ -247,7 +247,7 @@ def loadAllSystem():
 		allSystem.update( {systemName: [stellar, stellarMultiple]} )
 		stellarMultiple.multiple.setSelectable(True)
 		targetList.append(stellarMultiple.multiple)
-		containerToSystemMap.update( {stellarMultiple.multiple: [stellar]} )
+		containerToSystemMap.update( {stellarMultiple.multiple: stellar} )
 		if v == row and h == column:
 			break;
 def onEvent():
@@ -264,6 +264,7 @@ def onEvent():
 	global appMenu
 	global menuShow
 	global containerToSystemMap
+	global newSystemInCave
 	e = getEvent()
 	type = e.getServiceType()
 	if(type == ServiceType.Pointer or type == ServiceType.Wand or type == ServiceType.Keyboard):
@@ -326,7 +327,7 @@ def onEvent():
 			pick = EventFlags.Button5
 			move = EventFlags.Button7
 			lowHigh = e.getAxis(1)
-			leftRight = e.getAxis(0)
+			leftRight = -e.getAxis(0)
 			
 			if(e.isButtonDown(confirmButton) and not menuShow):
 				appMenu.getContainer().setPosition(e.getPosition())
@@ -387,12 +388,14 @@ def onEvent():
 				for item in targetList:
 					hitData = hitNode(item, r[1], r[2])
 					if(hitData[0]):
-						switchSystemInCave(containerToSystemMap.get(item))
-						break
+						newSystemInCave = containerToSystemMap.get(item)
+						#switchSystemInCave(containerToSystemMap.get(item))
+						#break
 
 		if(type == ServiceType.Pointer):
 			confirmButton = EventFlags.Button2
 			quitButton = EventFlags.Button1
+			newSystemInCave = containerToSystemMap.get(targetList[2])
 			if(e.isButtonDown(confirmButton)):
 				appMenu.getContainer().setPosition(e.getPosition())
 				appMenu.show()
