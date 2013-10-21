@@ -10,7 +10,6 @@ from fun import *
 def buildGalaxy(systems):
 	global stellarColorMap
 	global galaxyScale
-	global galaxy
 	global fontSize
 	galaxyModel = ModelGeometry.create('galaxyModel')
 	for systemName in systems:
@@ -47,9 +46,13 @@ def buildGalaxy(systems):
 	starProgram.geometryOutput = PrimitiveType.TriangleStrip
 	getSceneManager().addProgram(starProgram)
 	
-	inst = StaticObject.create('galaxyModel')
+	galaxyCore = StaticObject.create('galaxyModel')
+	inst = galaxyCore
 	inst.setPosition(Vector3(0,0,0))
-	inst.setEffect('stars -t -a')
-	galaxy.addChild(inst)
+	inst.getMaterial().setProgram('stars')
+	inst.getMaterial().setTransparent(True)
+	inst.getMaterial().setAdditive(True)
+	inst.getMaterial().setDepthTestEnabled(True)
+	galaxy.addChild(galaxyCore)
 	galaxy.setChildrenVisible(False)
-	return galaxy
+	return (galaxy,galaxyCore)

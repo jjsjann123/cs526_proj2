@@ -29,3 +29,4 @@ stellarMap = { 'A': (1, 1, 1), 'F': (65.0/255,99.0/255,1), 'G': (1.0, 1.0, 0.0),
 fontSize = 60
 
 galaxy = SceneNode.create('galaxy')
+galaxyCore = None

@@ -121,20 +121,20 @@ def onEvent():
 			flagRotateUpDown = lowHigh
 
 			if flagShowSpot:
-				pos = e.getPosition()
-				orient = e.getOrientation()
-				Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
-				res = Ray.intersect(wall)
-				# r = getRayFromEvent(e)
-				# if (r[0]): 
-					# ray = Ray3(Point3(r[1][0], r[1][1], r[1][2]), Vector3(r[2][0], r[2][1], r[2][2]))
-					# pos = cam.getPosition()
-					# wall = Sphere(Point3(pos[0], pos[1], pos[2]), 3.45)
-					# res = ray.intersect(wall)
-				if res != None:
-					hitSpot = res.p
-					print "moving sphere"
-					spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
+				# pos = e.getPosition()
+				# orient = e.getOrientation()
+				# Ray = orient * Ray3(Point3(pos[0], pos[1], pos[2]), Vector3( 0., 0., -1.))
+				# res = Ray.intersect(wall)
+				r = getRayFromEvent(e)
+				if (r[0]): 
+					ray = Ray3(Point3(r[1][0], r[1][1], r[1][2]), Vector3(r[2][0], r[2][1], r[2][2]))
+					pos = cam.getPosition()
+					wall = Sphere(Point3(pos[0], pos[1], pos[2]), 3.45)
+					res = ray.intersect(wall)
+					if res != None:
+						hitSpot = res.p
+						print "moving sphere"
+						spotLight.setPosition(Vector3(hitSpot[0], hitSpot[1], hitSpot[2]))
 				if(e.isButtonDown(pick) and pickMultiples != None):
 					print 'try to pick'
 					pos = e.getPosition()
@@ -194,40 +194,41 @@ def attachUpdateFunction(func):
 setEventFunction(onEvent)
 setUpdateFunction(onUpdate)
 
-# btest = True
-# def ifHitAnything (node, distance):
-	# global btest
-	# if (node == None):
-		# print "missed"
-	# else:
-		# print 'hit'
-		# if btest:
-			# node.setEffect("colored -e red")
-		# else:
-			# node.setEffect("colored -e blue")
-		# btest = not btest
+btest = True
+def ifHitAnything (node, distance):
+	global btest
+	if (node == None):
+		print "missed"
+	else:
+		print 'hit'
+		if btest:
+			node.setEffect("colored -e red")
+		else:
+			node.setEffect("colored -e blue")
+		btest = not btest
 
-# pickMultiples = ifHitAnything
-# sphere2 = SphereShape.create(1, 4)
-# sphere2.setPosition(Vector3(0, 3, -10))
-# sphere2.setSelectable(True)
-# sphere3 = SphereShape.create(1, 4)
-# sphere3.setPosition(Vector3(3, 3, -10))
+pickMultiples = ifHitAnything
+sphere2 = SphereShape.create(1, 4)
+sphere2.setPosition(Vector3(0, 3, -10))
+sphere2.setSelectable(True)
+cam.addChild(sphere2)
+sphere3 = SphereShape.create(1, 4)
+sphere3.setPosition(Vector3(3, 3, -10))
 
-# geom = ModelGeometry.create('stellar')
-# width = 2;
-# height = 2;
-# v1 = geom.addVertex(Vector3(0, height/2, -0.01))
-# geom.addColor(Color(0,1,0,0))
-# v2 = geom.addVertex(Vector3(0, -height/2, -0.01))
-# geom.addColor(Color(0,0,0,0))
-# v3 = geom.addVertex(Vector3(width, height/2, -0.01))
-# geom.addColor(Color(1,1,0,0))
-# v4 = geom.addVertex(Vector3(width, -height/2, -0.01))
-# geom.addColor(Color(1,0,0,0))
-# geom.addPrimitive(PrimitiveType.TriangleStrip, 0, 4)
-# getSceneManager().addModel(geom)
-# obj = StaticObject.create('stellar')
-# obj.setPosition(Vector3(-3, 0, -10))
-# obj.setEffect('colored -e yellow')
-# obj.setSelectable(True)
+geom = ModelGeometry.create('stellar')
+width = 2;
+height = 2;
+v1 = geom.addVertex(Vector3(0, height/2, -0.01))
+geom.addColor(Color(0,1,0,0))
+v2 = geom.addVertex(Vector3(0, -height/2, -0.01))
+geom.addColor(Color(0,0,0,0))
+v3 = geom.addVertex(Vector3(width, height/2, -0.01))
+geom.addColor(Color(1,1,0,0))
+v4 = geom.addVertex(Vector3(width, -height/2, -0.01))
+geom.addColor(Color(1,0,0,0))
+geom.addPrimitive(PrimitiveType.TriangleStrip, 0, 4)
+getSceneManager().addModel(geom)
+obj = StaticObject.create('stellar')
+obj.setPosition(Vector3(-3, 0, -10))
+obj.setEffect('colored -e yellow')
+obj.setSelectable(True)

@@ -5,7 +5,6 @@ from xmlReader import *
 from orbit import *
 from multiples import *
 from galaxy import *
-from fun import *
 from wand import *
 
 systemInCave = None
@@ -17,8 +16,10 @@ containerToSystemMap = {}
 
 def updateFunction(frame, t, dt):
 	global systemInCave
+	global galaxy
 	if systemInCave != None:
 		systemInCave.running(dt)
+	galaxy.yaw(dt*radians(10))
 	
 def setGlobalOrbitScale(scale = 5.0):
 	global globalOrbitScale
@@ -42,10 +43,13 @@ def setRotationSpeedScale(scale):
 def switchSystemInCave(newSystem):
 	global systemInCave
 	global galaxy
+	global galaxyCore
 	if newSystem == galaxy:
 		systemInCave.setVisible(False)
 		galaxy.setChildrenVisible(True)
 		galaxy.setVisible(True)
+		galaxyCore.getMaterial().setDepthTestEnabled(False)
+		
 	else:
 		if galaxy.isVisible():
 			galaxy.setVisible(False)
@@ -110,9 +114,9 @@ multiples.orbitRatio.setFloat(8.0)
 skybox = Skybox()
 skybox.loadCubeMap('./model/skybox/', 'png')
 getSceneManager().setSkyBox(skybox)
-# cam.setPosition(Vector3( 10, 2, 10 ))
-# cam.yaw(radians(45))
-# cam.pitch(radians(-10))
+cam.setPosition(Vector3( 10, 2, 10 ))
+cam.yaw(radians(45))
+cam.pitch(radians(-10))
 
 # for h in range(1,9):
 	# for v in range(1,9):
@@ -122,8 +126,9 @@ def loadAllSystem():
 	h = 1;
 	v = 0;
 	global galaxy
+	global galaxyCore
 	global containerToSystemMap
-	galaxy = buildGalaxy(systemDic)
+	(galaxy,galaxyCore) = buildGalaxy(systemDic)
 	for systemName in systemDic:
 		stellar = PlanetarySystem(systemDic[systemName]['star'], systemDic[systemName]['planets'], systemName)
 		stellarMultiple = multiples(systemDic[systemName])
@@ -135,6 +140,8 @@ def loadAllSystem():
 		stellar.drawSystem(False)
 		allSystem.update( {systemName: [stellar, stellarMultiple]} )
 		containerToSystemMap.update( {stellarMultiple.multiple: [stellar]} )
+		if v == row and h == column:
+			break;
 
 def pickSystem(node, distance):
 	global containerToSystemMap
@@ -142,8 +149,6 @@ def pickSystem(node, distance):
 	pick = containerToSystemMap.get(node)
 	if pick != None:
 		switchSystemInCave(pick)
-	
-	
 
 loadAllSystem()
 switchSystemInCave(allSystem['Sun'][0])
